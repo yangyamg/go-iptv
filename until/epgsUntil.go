@@ -362,6 +362,7 @@ func GetTxt(id int64) string {
 	if err := dao.DB.Model(&models.IptvCategory{}).Where("id in (?) and enable = 1", categoryIdList).Order("sort asc").Find(&categoryList).Error; err != nil {
 		return res
 	}
+	cfg := dao.GetConfig()
 
 	for _, category := range categoryList {
 		var channels []models.IptvChannelShow
@@ -376,7 +377,13 @@ func GetTxt(id int64) string {
 		res += category.Name + ",#genre#\n"
 		for _, channel := range channels {
 			if channel.Status == 1 {
-				res += channel.Name + "," + channel.Url + "\n"
+				var url string
+				if category.Proxy == 1 && cfg.Proxy.Status == 1 {
+					url = fmt.Sprintf("%s:%d/p/%d?u=%s", cfg.ServerUrl, cfg.Proxy.Port, category.ID, channel.Url)
+				} else {
+					url = channel.Url
+				}
+				res += channel.Name + "," + url + "\n"
 			}
 
 		}
