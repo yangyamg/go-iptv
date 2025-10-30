@@ -177,7 +177,7 @@ func AddList(params url.Values) dto.ReturnJsonDto {
 			dao.DB.Model(&models.IptvCategoryList{}).Create(&iptvCategoryList)
 		}
 
-		return GenreChannels(listName, urlData, iptvCategoryList.ID, doRepeat)
+		return GenreChannels(listName, urlData, iptvCategoryList.UA, iptvCategoryList.ID, doRepeat)
 	} else {
 		iptvCategoryList.LatestTime = time.Now().Format("2006-01-02 15:04:05")
 		if iptvCategoryList.ID != 0 {
@@ -196,6 +196,7 @@ func AddList(params url.Values) dto.ReturnJsonDto {
 			Type:   "add",
 			Sort:   maxSort + 1,
 			ListId: iptvCategoryList.ID,
+			UA:     iptvCategoryList.UA,
 		}
 		dao.DB.Model(&models.IptvCategory{}).Create(&iptvCategory)
 		repeat, err := until.AddChannelList(urlData, iptvCategory.ID, iptvCategoryList.ID, doRepeat)
@@ -279,6 +280,7 @@ func UpdateList(params url.Values) dto.ReturnJsonDto {
 					Type:   "add",
 					Sort:   maxSort + 1,
 					ListId: iptvCategoryList.ID,
+					UA:     iptvCategoryList.UA,
 				}
 				dao.DB.Model(&models.IptvCategory{}).Create(&oldC)
 			}
@@ -290,7 +292,7 @@ func UpdateList(params url.Values) dto.ReturnJsonDto {
 				return dto.ReturnJsonDto{Code: 0, Msg: fmt.Sprintf("更新列表 %s 失败\n", iptvCategoryList.Name), Type: "danger"}
 			}
 		}
-		return GenreChannels(iptvCategoryList.Name, urlData, iptvCategoryList.ID, doRepeat)
+		return GenreChannels(iptvCategoryList.Name, urlData, iptvCategoryList.UA, iptvCategoryList.ID, doRepeat)
 	} else {
 		dao.DB.Model(&models.IptvCategoryList{}).Where("id = ?", listId).Updates(updata)
 		var oldC models.IptvCategory
@@ -547,7 +549,7 @@ func SaveChannelsOne(params url.Values) dto.ReturnJsonDto {
 	return dto.ReturnJsonDto{Code: 1, Msg: "保存成功", Type: "success"}
 }
 
-func GenreChannels(listName, srclist string, listId int64, doRepeat bool) dto.ReturnJsonDto {
+func GenreChannels(listName, srclist, ua string, listId int64, doRepeat bool) dto.ReturnJsonDto {
 
 	data := until.ConvertDataToMap(srclist)
 	var repeatCount int
@@ -570,6 +572,7 @@ func GenreChannels(listName, srclist string, listId int64, doRepeat bool) dto.Re
 				Sort:   maxSort + 1,
 				Type:   "add",
 				ListId: listId,
+				UA:     ua,
 			}
 
 			if err := dao.DB.Create(&category).Error; err != nil {
@@ -708,7 +711,7 @@ func UploadPayList(c *gin.Context) dto.ReturnJsonDto {
 			return dto.ReturnJsonDto{Code: 0, Msg: fmt.Sprintf("更新列表 %s 失败\n", listName), Type: "danger"}
 		}
 	}
-	return GenreChannels(listName, urlData, 0, false)
+	return GenreChannels(listName, urlData, "", 0, false)
 }
 
 func SaveCategory(params url.Values) dto.ReturnJsonDto {

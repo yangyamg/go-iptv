@@ -157,7 +157,7 @@ func UpdateList() {
 				dao.DB.Model(&models.IptvCategory{}).Where("list_id = ?", v.ID).First(&oldC)
 				until.AddChannelList(urlData, oldC.ID, v.ID, doRepeat)
 			}
-			GenreChannels(v.Name, urlData, v.ID, doRepeat)
+			GenreChannels(v.Name, urlData, v.UA, v.ID, doRepeat)
 		} else {
 			until.AddChannelList(urlData, oldC.ID, v.ID, doRepeat)
 		}
@@ -166,7 +166,7 @@ func UpdateList() {
 	log.Println("定时执行更新频道任务结束")
 }
 
-func GenreChannels(listName, srclist string, listId int64, doRepeat bool) {
+func GenreChannels(listName, srclist, ua string, listId int64, doRepeat bool) {
 
 	data := until.ConvertDataToMap(srclist)
 
@@ -189,6 +189,7 @@ func GenreChannels(listName, srclist string, listId int64, doRepeat bool) {
 				Sort:   maxSort + 1,
 				Type:   "add",
 				ListId: listId,
+				UA:     ua,
 			}
 
 			if err := dao.DB.Create(&category).Error; err != nil {
