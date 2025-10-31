@@ -48,10 +48,15 @@ func Proxy(params url.Values) dto.ReturnJsonDto {
 
 	port := params.Get("port")
 	proxy := params.Get("proxy")
+	pAddr := params.Get("pAddr")
 
 	if proxy == "1" || proxy == "true" || proxy == "on" {
 		if port == "" {
-			return dto.ReturnJsonDto{Code: 0, Msg: "port不能为空", Type: "danger"}
+			return dto.ReturnJsonDto{Code: 0, Msg: "端口不能为空", Type: "danger"}
+		}
+
+		if pAddr == "" {
+			return dto.ReturnJsonDto{Code: 0, Msg: "地址不能为空", Type: "danger"}
 		}
 
 		portInt64, err := strconv.ParseInt(port, 10, 64)
@@ -65,12 +70,14 @@ func Proxy(params url.Values) dto.ReturnJsonDto {
 		if err != nil {
 			cfg.Proxy.Status = 0
 			cfg.Proxy.Port = portInt64
+			cfg.Proxy.PAddr = pAddr
 
 			dao.SetConfig(cfg)
 			return dto.ReturnJsonDto{Code: 0, Msg: "启动失败: " + err.Error(), Type: "danger"}
 		} else if res.Code == 1 {
 			cfg.Proxy.Status = 1
 			cfg.Proxy.Port = portInt64
+			cfg.Proxy.PAddr = pAddr
 
 			dao.SetConfig(cfg)
 			go until.CleanAutoCacheAll() // 清理缓存
@@ -78,12 +85,14 @@ func Proxy(params url.Values) dto.ReturnJsonDto {
 		} else if res.Code != 1 {
 			cfg.Proxy.Status = 0
 			cfg.Proxy.Port = portInt64
+			cfg.Proxy.PAddr = pAddr
 
 			dao.SetConfig(cfg)
 			return dto.ReturnJsonDto{Code: 0, Msg: "启动失败: " + res.Msg, Type: "danger"}
 		} else {
 			cfg.Proxy.Status = 0
 			cfg.Proxy.Port = portInt64
+			cfg.Proxy.PAddr = pAddr
 
 			dao.SetConfig(cfg)
 			dao.WS.SendWS(dao.Request{Action: "stopProxy"})

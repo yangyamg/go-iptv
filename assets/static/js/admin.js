@@ -1033,6 +1033,41 @@ function toggleLock(btn) {
         btn.classList.add("btn-danger"); 
     }
 }
+
+function proxyLock(btn) {
+    const input = document.getElementById("pAddr");
+    const icon = btn.querySelector("i");
+    if (input.hasAttribute("readonly")) {
+		$.confirm({
+			title: '操作确认',
+			content: '源代理的地址，当后台和源代理使用不同域名或ip时，请手动修改这个地址，确认修改吗？',
+			type: 'green',
+			buttons: {
+				confirm: {
+					text: '确认',
+					btnClass: 'btn-danger',
+					action: function () {
+						input.removeAttribute("readonly");
+						input.focus();
+						input.value = `${window.location.protocol}//${window.location.hostname}`;
+						icon.className = "mdi mdi-lock-open"; 
+						btn.classList.remove("btn-danger");
+						btn.classList.add("btn-primary"); 
+					}
+				},
+				cancel: {
+					text: '取消',
+					btnClass: 'btn-success'
+				}
+			}
+		});
+    } else {
+        input.setAttribute("readonly", true);
+        icon.className = "mdi mdi-lock"; 
+		btn.classList.remove("btn-primary");
+        btn.classList.add("btn-danger"); 
+    }
+}
 function caMoveup() {
 	const tbody = document.getElementById("categorylist_tbody");
     if (!tbody) return;

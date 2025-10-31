@@ -5,6 +5,7 @@ type AdminLicenseDto struct {
 	Title     string `json:"title"`
 	Proxy     int64  `json:"proxy"`
 	Port      int64  `json:"port"`
+	ProxyAddr string `json:"proxy_addr"`
 	Lic       Lic    `json:"lic"`
 }
 

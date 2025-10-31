@@ -214,7 +214,11 @@ func GetAutoChannelList(category models.IptvCategory) []models.IptvChannelShow {
 				ch.Logo = EpgNameGetLogo(ch.EpgName)
 			}
 			if category.Proxy == 1 && cfg.Proxy.Status == 1 {
-				ch.Url = fmt.Sprintf("%s:%d/p/%d?u=%s", cfg.ServerUrl, cfg.Proxy.Port, category.ID, ch.Url)
+				urlMsg := fmt.Sprintf("{\"c\":%d,\"u\":\"%s\"}", category.ID, ch.Url)
+				msg, err := UrlEncrypt(dao.Lic.ID, urlMsg)
+				if err == nil {
+					ch.PUrl = fmt.Sprintf("%s:%d/p/%s", cfg.ServerUrl, cfg.Proxy.Port, msg)
+				}
 			}
 			result = append(result, ch)
 			continue
@@ -224,7 +228,11 @@ func GetAutoChannelList(category models.IptvCategory) []models.IptvChannelShow {
 				ch.Logo = EpgNameGetLogo(ch.EpgName)
 			}
 			if category.Proxy == 1 && cfg.Proxy.Status == 1 {
-				ch.Url = fmt.Sprintf("%s:%d/p/%d?u=%s", cfg.ServerUrl, cfg.Proxy.Port, category.ID, ch.Url)
+				urlMsg := fmt.Sprintf("{\"c\":%d,\"u\":\"%s\"}", category.ID, ch.Url)
+				msg, err := UrlEncrypt(dao.Lic.ID, urlMsg)
+				if err == nil {
+					ch.PUrl = fmt.Sprintf("%s:%d/p/%s", cfg.ServerUrl, cfg.Proxy.Port, msg)
+				}
 			}
 			result = append(result, ch)
 		}
@@ -256,7 +264,11 @@ func CaGetChannels(categoryDb models.IptvCategory) []models.IptvChannelShow {
 				channels[i].Logo = EpgNameGetLogo(ch.EpgName)
 			}
 			if categoryDb.Proxy == 1 && cfg.Proxy.Status == 1 {
-				channels[i].Url = fmt.Sprintf("%s:%d/p/%d?u=%s", cfg.ServerUrl, cfg.Proxy.Port, categoryDb.ID, ch.Url)
+				urlMsg := fmt.Sprintf("{\"c\":%d,\"u\":\"%s\"}", categoryDb.ID, ch.Url)
+				msg, err := UrlEncrypt(dao.Lic.ID, urlMsg)
+				if err == nil {
+					channels[i].PUrl = fmt.Sprintf("%s:%d/p/%s", cfg.ServerUrl, cfg.Proxy.Port, msg)
+				}
 			}
 		}
 		return channels

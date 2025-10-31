@@ -85,12 +85,12 @@ func (s *SignalExecutor) handleSignal() {
 	if s.waitTimer != nil {
 		s.waitTimer.Stop()
 		s.waitTimer.Reset(s.delay)
-		log.Println("🔁 重置EPG缓存重建信号等待 30 秒")
+		log.Println("🔁 重置EPG缓存重建信号等待 10 秒")
 		return
 	}
 
 	// 新建计时器
-	log.Println("⏳ 收到EPG缓存重建信号，30 秒后执行")
+	log.Println("⏳ 收到EPG缓存重建信号，10 秒后执行")
 	s.waitTimer = time.AfterFunc(s.delay, func() {
 		s.timerMu.Lock()
 		ctx, cancel := context.WithCancel(context.Background())
@@ -116,7 +116,7 @@ func doRebuild(ctx context.Context) {
 
 func InitCacheRebuild() {
 	// 创建执行器：任务为打印模拟执行
-	Cache = NewSignalExecutor(30*time.Second, doRebuild)
+	Cache = NewSignalExecutor(10*time.Second, doRebuild)
 	log.Println("🔧 EPG缓存重建任务初始化完成")
 
 	// 启动执行器

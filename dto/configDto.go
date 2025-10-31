@@ -73,8 +73,9 @@ type Rss struct {
 }
 
 type Proxy struct {
-	Status int64 `mapstructure:"status" json:"status" yaml:"status"`
-	Port   int64 `mapstructure:"port" json:"port" yaml:"port"`
+	Status int64  `mapstructure:"status" json:"status" yaml:"status"`
+	Port   int64  `mapstructure:"port" json:"port" yaml:"port"`
+	PAddr  string `mapstructure:"addr" json:"addr" yaml:"addr"`
 }
 
 type Config struct {

@@ -26,6 +26,7 @@ type IptvChannelShow struct {
 	ListId  int64  `gorm:"column:list_id" json:"list_id"`
 	EpgName string `gorm:"column:epg_name" json:"epg_name"`
 	Logo    string `gorm:"-" json:"logo"`
+	PUrl    string `gorm:"-" json:"p_url"`
 }
 
 func (IptvChannelShow) TableName() string {

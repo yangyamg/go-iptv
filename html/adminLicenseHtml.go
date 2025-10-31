@@ -31,6 +31,7 @@ func License(c *gin.Context) {
 
 	cfg := dao.GetConfig()
 	pageData.Proxy = cfg.Proxy.Status
+	pageData.ProxyAddr = cfg.Proxy.PAddr
 	pageData.Lic = dao.Lic
 	pageData.Port = cfg.Proxy.Port
 	pageData.Lic.ExpStr = time.Unix(pageData.Lic.Exp, 0).Format("2006-01-02 15:04:05")

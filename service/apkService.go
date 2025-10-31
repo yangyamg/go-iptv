@@ -5,6 +5,7 @@ import (
 	"compress/zlib"
 	"encoding/base64"
 	"encoding/json"
+	"fmt"
 	"go-iptv/dao"
 	"go-iptv/dto"
 	"go-iptv/models"
@@ -124,6 +125,7 @@ func GetChannels(channel dto.DataReqDto) string {
 	var categoryList []models.IptvCategory
 	dao.DB.Model(&models.IptvCategory{}).Where("id in ? and enable = ?", cList, 1).Order("sort asc").Find(&categoryList)
 
+	cfg := dao.GetConfig()
 	for _, v := range categoryList {
 		var tmpData []dto.ChannelData
 		var i int64 = 1
@@ -131,6 +133,19 @@ func GetChannels(channel dto.DataReqDto) string {
 		var tmpMap = make(map[string]int64)
 
 		for _, channel := range until.CaGetChannels(v) {
+			if v.Proxy == 1 && cfg.Proxy.Status == 1 {
+				urlMsg := fmt.Sprintf("{\"c\":%d,\"u\":\"%s\"}", v.ID, channel.Url)
+				msg, err := until.UrlEncrypt(dao.Lic.ID, urlMsg)
+				if err == nil {
+					pUrl := fmt.Sprintf("%s:%d/p/%s", cfg.ServerUrl, cfg.Proxy.Port, msg)
+					dataMap[channel.Name] = append(dataMap[channel.Name], strings.TrimSpace(pUrl))
+					if _, ok := tmpMap[channel.Name]; !ok {
+						tmpMap[channel.Name] = i
+						i++
+					}
+					continue
+				}
+			}
 			dataMap[channel.Name] = append(dataMap[channel.Name], strings.TrimSpace(channel.Url))
 			if _, ok := tmpMap[channel.Name]; !ok {
 				tmpMap[channel.Name] = i

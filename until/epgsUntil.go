@@ -384,13 +384,16 @@ func GetTxt(id int64) string {
 		res += category.Name + ",#genre#\n"
 		for _, channel := range channels {
 			if channel.Status == 1 {
-				var url string
 				if category.Proxy == 1 && cfg.Proxy.Status == 1 {
-					url = fmt.Sprintf("%s:%d/p/%d?u=%s", cfg.ServerUrl, cfg.Proxy.Port, category.ID, channel.Url)
-				} else {
-					url = channel.Url
+					urlMsg := fmt.Sprintf("{\"c\":%d,\"u\":\"%s\"}", category.ID, channel.Url)
+					msg, err := UrlEncrypt(dao.Lic.ID, urlMsg)
+					if err == nil {
+						channel.PUrl = fmt.Sprintf("%s:%d/p/%s", cfg.ServerUrl, cfg.Proxy.Port, msg)
+						res += channel.Name + "," + channel.PUrl + "\n"
+						continue
+					}
 				}
-				res += channel.Name + "," + url + "\n"
+				res += channel.Name + "," + channel.Url + "\n"
 			}
 
 		}
