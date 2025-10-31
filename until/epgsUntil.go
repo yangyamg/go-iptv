@@ -388,7 +388,7 @@ func GetTxt(id int64) string {
 					urlMsg := fmt.Sprintf("{\"c\":%d,\"u\":\"%s\"}", category.ID, channel.Url)
 					msg, err := UrlEncrypt(dao.Lic.ID, urlMsg)
 					if err == nil {
-						channel.PUrl = fmt.Sprintf("%s:%d/p/%s", cfg.ServerUrl, cfg.Proxy.Port, msg)
+						channel.PUrl = fmt.Sprintf("%s:%d/p/%s", cfg.Proxy.PAddr, cfg.Proxy.Port, msg)
 						res += channel.Name + "," + channel.PUrl + "\n"
 						continue
 					}

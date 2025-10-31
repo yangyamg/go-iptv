@@ -137,7 +137,7 @@ func GetChannels(channel dto.DataReqDto) string {
 				urlMsg := fmt.Sprintf("{\"c\":%d,\"u\":\"%s\"}", v.ID, channel.Url)
 				msg, err := until.UrlEncrypt(dao.Lic.ID, urlMsg)
 				if err == nil {
-					pUrl := fmt.Sprintf("%s:%d/p/%s", cfg.ServerUrl, cfg.Proxy.Port, msg)
+					pUrl := fmt.Sprintf("%s:%d/p/%s", cfg.Proxy.PAddr, cfg.Proxy.Port, msg)
 					dataMap[channel.Name] = append(dataMap[channel.Name], strings.TrimSpace(pUrl))
 					if _, ok := tmpMap[channel.Name]; !ok {
 						tmpMap[channel.Name] = i
