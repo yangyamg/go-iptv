@@ -610,6 +610,16 @@ function getChannels(id) {
                 const tbody = document.getElementById("channellist_tbody");
                 tbody.innerHTML = "";
                 data.data.forEach(item => {
+					let speed = parseFloat(item.speed.replace(/[^0-9.]/g, ""));
+					let color = "";
+
+					if (speed <= 200) {
+						color = "green";  // 绿
+					} else if (speed <= 1000) {
+						color = "orange"; // 黄
+					} else {
+						color = "red";    // 红
+					}
                     const tr = document.createElement("tr");
                     tr.align = "center";
                     const displayUrl = item.url.length > 20 
@@ -622,7 +632,7 @@ function getChannels(id) {
   '<td class="ch-url" data-value="' + item.url + '"><a href="' + item.url + '" target="_blank">' + displayUrl + '</a></td>' +
   '<td class="status-show">' + (item.status === 1 ? '<font color="#33a996">上线</font>' : '<font color="red">下线</font>') + '</td>' +
   '<td>' + item.resolution + '</td>' +
-  '<td>' + item.speed + '</td>' +
+  '<td style="color:' + color + '">' + item.speed + '</td>' +
   '<td>' + (item.epg_name || '未绑定') + '</td>' +
   '<td>' + (item.logo === '' 
       ? '无' 

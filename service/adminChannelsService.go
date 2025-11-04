@@ -578,7 +578,13 @@ func GenreChannels(listName, srclist, ua string, listId int64, doRepeat bool) dt
 			if err := dao.DB.Create(&category).Error; err != nil {
 				return dto.ReturnJsonDto{Code: 0, Msg: fmt.Sprintf("新增分类 %s 失败\n", categoryName), Type: "danger"}
 			}
-
+			a, err := until.AddChannelList(genreList, category.ID, listId, doRepeat)
+			if err != nil {
+				log.Println(fmt.Sprintf("新增分类 %s 失败\n", categoryName), err)
+				continue
+			}
+			repeatCount += a
+			continue
 		}
 		a, err := until.AddChannelList(genreList, category.ID, listId, doRepeat)
 		if err != nil {
