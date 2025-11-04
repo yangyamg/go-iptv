@@ -69,15 +69,17 @@ func ConvertDataToMap(data string) map[string]string {
 		}
 
 		if strings.Contains(line, "#genre#") {
-			currentGenre = strings.ReplaceAll(line, ",#genre#", "")
-			result[currentGenre] = ""
+			currentGenre = strings.TrimSuffix(line, ",#genre#")
+			// 如果当前 genre 不存在，则初始化为空字符串
+			if _, exists := result[currentGenre]; !exists {
+				result[currentGenre] = ""
+			}
 		} else if currentGenre != "" {
-			result[currentGenre] += line + "\n"
+			if result[currentGenre] != "" {
+				result[currentGenre] += "\n"
+			}
+			result[currentGenre] += line
 		}
-	}
-
-	for k, v := range result {
-		result[k] = strings.TrimSpace(v)
 	}
 
 	return result
