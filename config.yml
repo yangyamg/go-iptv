@@ -28,3 +28,6 @@ rss:
 proxy:
     status: 0
     port: 8080
+resolution:
+  auto: 0
+  disch: 0
