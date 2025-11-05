@@ -9,6 +9,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
 
@@ -195,8 +196,11 @@ func GenreChannels(listName, srclist, ua string, listId int64, doRepeat bool) {
 			if err := dao.DB.Create(&category).Error; err != nil {
 				continue
 			}
-
 			until.AddChannelList(genreList, category.ID, listId, doRepeat)
+		} else {
+			until.AddChannelList(genreList, category.ID, listId, doRepeat)
+			proxyCaCheck := "proxyCaCheck_" + strconv.FormatInt(category.ID, 10)
+			dao.Cache.Delete(proxyCaCheck)
 		}
 	}
 	log.Println("更新" + listName + "分类结束")

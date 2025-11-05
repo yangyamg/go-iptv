@@ -100,7 +100,6 @@ func (s *SignalExecutor) handleSignal() {
 
 		log.Println("🚀 开始执行EPG缓存重建任务")
 		s.execFunc(ctx)
-		log.Println("✅ EPG缓存重建任务执行完成")
 	})
 }
 
@@ -110,12 +109,24 @@ func doRebuild(ctx context.Context) {
 		log.Println("⚠️ 重建任务被中断")
 		return
 	default:
+		makeMealsXmlCacheAll()
+		log.Println("✅ EPG缓存重建任务执行完成")
 		cfg := dao.GetConfig()
 		if cfg.Resolution.Auto == 1 && dao.Lic.Tpye != 0 {
-			log.Println("开始执行分辨率测试，测试期间cpu、内存占用会较高，请耐心等待，或关闭自动测试")
-			dao.WS.SendWS(dao.Request{Action: "testResolutionAll"}) //测试分辨率
+			log.Println("🚀 开始执行分辨率识别任务")
+			log.Println("开始执行分辨率测试，测试期间cpu、内存占用会较高，请耐心等待，中断执行请关闭自动测试并重启引擎")
+			res, err := dao.WS.SendWS(dao.Request{Action: "testResolutionAll"}) //测试分辨率
+			if err != nil {
+				log.Println("分辨率测试失败:", err)
+			} else if res.Code != 1 {
+				log.Println("分辨率测试失败:", res.Msg)
+			} else {
+				log.Println("分辨率测试成功")
+				log.Println("🚀 重新执行EPG缓存重建任务")
+				CleanAutoCacheAll() //重新执行缓存重建
+			}
+
 		}
-		makeMealsXmlCacheAll()
 	}
 }
 

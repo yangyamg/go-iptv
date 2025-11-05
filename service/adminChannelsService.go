@@ -789,6 +789,10 @@ func SaveCategory(params url.Values) dto.ReturnJsonDto {
 			"rules": ca.Rules,
 			"proxy": ca.Proxy,
 		})
+
+		proxyCaCheck := "proxyCaCheck_" + strconv.FormatInt(caIdInt, 10)
+		dao.Cache.Delete(proxyCaCheck)
+
 		if ca.Type == "auto" {
 			go until.CleanAutoCacheAll()
 		} else {
