@@ -18,17 +18,12 @@ RUN case "$TARGETARCH" in \
     esac
 
 # 根据架构交叉编译
-RUN if [ "$TARGETARCH" = "arm" ]; then \
-        echo "交叉编译 armv7"; \
-        GOOS=linux GOARCH=arm GOARM=7 go build -o iptv main.go ; \
-    else \
-        if [ "$TARGETARCH" = "amd64" ]; then \
-            echo "编译 amd64"; \
-        else \
-            echo "交叉编译 arm64"; \
-        fi \
-        GOOS=linux GOARCH=$TARGETARCH go build -o iptv main.go ; \
-    fi
+RUN case "$TARGETARCH" in \
+      amd64) echo "编译 amd64"; GOOS=linux GOARCH=amd64 go build -o iptv main.go ;; \
+      arm64) echo "交叉编译 arm64"; GOOS=linux GOARCH=arm64 go build -o iptv main.go ;; \
+      arm)   echo "交叉编译 armv7"; GOOS=linux GOARCH=arm GOARM=7 go build -o iptv main.go ;; \
+      *) echo "未知架构: $TARGETARCH" && exit 1 ;; \
+    esac
 
 RUN chmod +x /app/iptv
 
