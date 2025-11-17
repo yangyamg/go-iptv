@@ -1,0 +1,11 @@
+services:
+  iptv_server:
+    image: v1st233/iptv:latest
+    container_name: iptv_server
+    privileged: true  # 添加特权模式
+    ports:
+      - "80:80" 
+      - "8080:8080" 
+    volumes:
+      - /config:/config
+    restart: unless-stopped
