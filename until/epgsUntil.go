@@ -281,6 +281,10 @@ func BindChannel() bool {
 		}
 	}
 
+	cfg := dao.GetConfig()
+	if cfg.Epg.Fuzz == 1 && dao.Lic.Tpye != 0 {
+		dao.WS.SendWS(dao.Request{Action: "checkChEpg"})
+	}
 	go CleanAutoCacheAll() // 清理缓存
 	return true
 }

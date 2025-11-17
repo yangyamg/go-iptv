@@ -150,3 +150,20 @@ func DisCh(params url.Values) dto.ReturnJsonDto {
 	dao.SetConfig(cfg)
 	return dto.ReturnJsonDto{Code: 1, Msg: "设置成功", Type: "success"}
 }
+
+func EpgFuzz(params url.Values) dto.ReturnJsonDto {
+	epgFuzz := params.Get("epgFuzz")
+	cfg := dao.GetConfig()
+	if dao.Lic.Tpye == 0 {
+		cfg.Epg.Fuzz = 0
+		dao.SetConfig(cfg)
+		return dto.ReturnJsonDto{Code: 0, Msg: "未授权", Type: "danger"}
+	}
+	if epgFuzz == "1" || epgFuzz == "true" || epgFuzz == "on" {
+		cfg.Epg.Fuzz = 1
+	} else {
+		cfg.Epg.Fuzz = 0
+	}
+	dao.SetConfig(cfg)
+	return dto.ReturnJsonDto{Code: 1, Msg: "设置成功", Type: "success"}
+}

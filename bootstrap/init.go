@@ -97,6 +97,13 @@ func InitLogo() bool {
 	return true
 }
 
+func InitAlias() {
+	if until.Exists("/config/alias.json") {
+		return
+	}
+	until.CopyFile("./alias.json", "/config/alias.json")
+}
+
 func initIptvCategory() {
 	has := dao.DB.Migrator().HasColumn(&IptvCategory{}, "url")
 	if has {

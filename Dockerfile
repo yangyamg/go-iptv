@@ -46,6 +46,8 @@ COPY ./README.md  /app/README.md
 COPY ./logo /app/logo
 COPY ./ChangeLog.md /app/ChangeLog.md
 COPY ./Version /app/Version
+COPY ./alias.json /app/alias.json
+COPY ./dictionary.txt /app/dictionary.txt
 
 RUN chmod 777 -R /usr/bin/apktool* 
 

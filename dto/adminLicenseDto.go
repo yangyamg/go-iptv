@@ -12,6 +12,7 @@ type AdminLicenseDto struct {
 	Version   string `json:"version"`
 	AutoRes   int64  `json:"auto_res"`
 	DisCh     int64  `json:"dis_ch"`
+	EpgFuzz   int64  `json:"epg_fuzz"`
 }
 
 type Lic struct {

@@ -30,6 +30,8 @@ func License(c *gin.Context) {
 			res = service.AutoRes(params)
 		case "disCh":
 			res = service.DisCh(params)
+		case "epgFuzz":
+			res = service.EpgFuzz(params)
 		}
 
 	}

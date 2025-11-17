@@ -14,7 +14,7 @@ import (
 func main() {
 
 	if !until.IsPrivileged() {
-		log.Println("请使用privileged(特权模式)运行")
+		log.Println("请使用privileged(特权模式、高权限执行容器)运行")
 		return
 	}
 
@@ -60,6 +60,8 @@ func main() {
 		log.Println("初始化清除缓存失败:", err)
 		return
 	}
+
+	bootstrap.InitAlias() // 初始化epg别名
 
 	if os.Getenv("IPTVDEV") != "true" {
 		bootstrap.InitLicense() // 初始化授权信息

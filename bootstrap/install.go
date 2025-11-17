@@ -63,6 +63,7 @@ func Install() (bool, string) {
 		log.Println("初始化Logo失败")
 		return false, "初始化Logo失败"
 	}
+	InitAlias()
 
 	dao.CONFIG_PATH = "/config/config.yml"
 	dao.LoadConfigFile()
