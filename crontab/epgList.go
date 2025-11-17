@@ -14,14 +14,14 @@ func EpgCron() {
 	c := cron.New(cron.WithSeconds()) // 支持秒级别 cron 表达式
 
 	// 生成1:00:00到5:59:59之间的随机时间
-	rand.Seed(time.Now().UnixNano())
-	hour := rand.Intn(5) + 1 // 1-5点
-	minute := rand.Intn(60)  // 0-59分
-	second := rand.Intn(60)  // 0-59秒
+	r := rand.New(rand.NewSource(time.Now().UnixNano()))
+	hour := r.Intn(5) + 1 // 1-5点
+	minute := r.Intn(60)  // 0-59分
+	second := r.Intn(60)  // 0-59秒
 
 	// 构建cron表达式（秒 分 时 * * *）
 	cronExpr := fmt.Sprintf("%d %d %d * * *", second, minute, hour)
-	log.Println("设置随机EPG自动更新时间为: %02d:%02d:%02d", hour, minute, second)
+	log.Printf("设置随机EPG自动更新时间为: %02d:%02d:%02d", hour, minute, second)
 
 	// cron 表达式格式: 秒 分 时 日 月 星期
 	// 下面表示每天 01:00:00

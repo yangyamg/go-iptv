@@ -13,6 +13,11 @@ import (
 
 func main() {
 
+	if !until.IsPrivileged() {
+		log.Println("请使用privileged(特权模式)运行")
+		return
+	}
+
 	if until.CheckRam() {
 		log.Println("可用内存不足256MB，无法运行")
 		return

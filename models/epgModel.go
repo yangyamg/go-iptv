@@ -1,7 +1,7 @@
 package models
 
 type IptvEpg struct {
-	ID          int64  `gorm:"primaryKey;autoIncrement" json:"id"`
+	ID          int64  `gorm:"column:id;primaryKey;autoIncrement" json:"id"`
 	Name        string `gorm:"column:name" json:"name"`
 	Content     string `gorm:"column:content" json:"content"`
 	CasStr      string `gorm:"column:cas" json:"cas"`

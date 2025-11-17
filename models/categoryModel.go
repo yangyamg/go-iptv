@@ -1,7 +1,7 @@
 package models
 
 type IptvCategory struct {
-	ID        int64  `gorm:"primaryKey;autoIncrement" json:"id"`
+	ID        int64  `gorm:"column:id;primaryKey;autoIncrement" json:"id"`
 	Name      string `gorm:"unique;column:name" json:"name"`
 	Enable    int64  `gorm:"column:enable;default:1" json:"enable"`
 	Type      string `gorm:"default:hand;column:type" json:"type"`
