@@ -375,7 +375,7 @@ func DeleteLogo(params url.Values) dto.ReturnJsonDto {
 }
 
 func DelNotFrom() dto.ReturnJsonDto {
-	dao.DB.Where("fromlist is null or fromlist = '' or fromlist = ' '").Delete(&models.IptvEpg{})
+	dao.DB.Where("id > 18 and (fromlist is null or fromlist = '' or fromlist = ' ')").Delete(&models.IptvEpg{})
 	return dto.ReturnJsonDto{Code: 1, Msg: "删除成功", Type: "success"}
 }
 

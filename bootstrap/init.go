@@ -182,23 +182,19 @@ func initIptvChannel() {
 }
 
 func initEpg() {
-	has := dao.DB.Migrator().HasColumn(&IptvEpg{}, "fromlist")
-	if !has {
-		dao.DB.AutoMigrate(&models.IptvEpg{})
-		var epgs []models.IptvEpg
-		dao.DB.Model(&models.IptvEpg{}).Find(&epgs)
-		for _, epg := range epgs {
-			if strings.Contains(epg.Name, "-") {
-				if epg.ID <= 18 {
-					epg.Name = strings.SplitN(epg.Name, "-", 2)[1]
-					epg.FromListStr = "0"
-					dao.DB.Save(&epg)
-				} else {
-					dao.DB.Delete(&epg)
-				}
+	dao.DB.AutoMigrate(&models.IptvEpg{})
+	var epgs []models.IptvEpg
+	dao.DB.Model(&models.IptvEpg{}).Find(&epgs)
+	for _, epg := range epgs {
+		if strings.Contains(epg.Name, "-") {
+			if epg.ID <= 18 {
+				epg.Name = strings.SplitN(epg.Name, "-", 2)[1]
+				epg.FromListStr = "0"
+				dao.DB.Save(&epg)
+			} else {
+				dao.DB.Delete(&epg)
 			}
 		}
-		until.UpdataEpgList()
 	}
-	dao.DB.AutoMigrate(&models.IptvEpg{})
+	until.UpdataEpgList()
 }
