@@ -614,6 +614,10 @@ function getChannels(id) {
         success: function(data) {
             if (data.type === "success") {
                 const tbody = document.getElementById("channellist_tbody");
+				if (!data.data || data.data.length === 0) {
+					tbody.innerHTML = "";
+					return;
+				}
                 tbody.innerHTML = "";
                 data.data.forEach(item => {
 					let speed = parseFloat(item.speed.replace(/[^0-9.]/g, ""));
@@ -670,9 +674,13 @@ function getChannelsTxt(btn){
 		data: { caId: cid, getchannels: "" },
 		success: function(data) {
 			if (data.type === "success") {
-				const tbody = document.getElementById("channellist_tbody");
 				var result = "";
 				var purls = "";
+				if (!data.data || data.data.length === 0) {
+					$("#srclist").val("暂无数据");
+					$("#plist").val("暂无数据");
+					return;
+				}
 				data.data.forEach(item => {
 					result += item.status + "|" + item.name + "," + item.url + "\n";
 					if (item.purl != ""){

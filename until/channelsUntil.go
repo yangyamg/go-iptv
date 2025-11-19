@@ -195,6 +195,10 @@ func GetAutoChannelList(category models.IptvCategory, show bool) []models.IptvCh
 	var result []models.IptvChannelShow
 
 	autoCaCheKey := "autoCategory_" + strconv.FormatInt(category.ID, 10)
+
+	if show {
+		autoCaCheKey = autoCaCheKey + "_show"
+	}
 	if dao.Cache.Exists(autoCaCheKey) {
 		err := dao.Cache.GetStruct(autoCaCheKey, &result)
 		if err == nil {
@@ -219,6 +223,9 @@ func GetAutoChannelList(category models.IptvCategory, show bool) []models.IptvCh
 		if strings.Contains(ch.Name, category.Rules) {
 			if ch.EpgName != "" {
 				ch.Logo = EpgNameGetLogo(ch.EpgName)
+				if category.ReName == 1 && !show {
+					ch.Name = ch.EpgName
+				}
 			}
 			if category.Proxy == 1 && cfg.Proxy.Status == 1 {
 				urlMsg := fmt.Sprintf("{\"c\":%d,\"u\":\"%s\"}", category.ID, ch.Url)
