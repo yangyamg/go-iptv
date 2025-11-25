@@ -142,6 +142,7 @@ func InitCacheRebuild() {
 	// 创建执行器：任务为打印模拟执行
 	Cache = NewSignalExecutor(10*time.Second, doRebuild)
 	log.Println("🔧 EPG缓存重建任务初始化完成")
+	log.Println("入群密码前半段: 052a8103   后半段在后台>进阶功能的开发人员工具(F12)中查看")
 
 	// 启动执行器
 	Cache.Start()
