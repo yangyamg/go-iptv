@@ -62,6 +62,11 @@ func AdminRouter(r *gin.Engine, path string) {
 			router.GET("/license", html.License)
 			router.POST("/license", api.License)
 
+			router.GET("/updata", html.Updata)
+			router.GET("/updata/check", api.UpdataCheck)
+			router.GET("/updata/down", api.UpdataDown)
+			router.GET("/updata/updata", api.Updata)
+
 			router.POST("/getRssUrl", api.GetRssUrl)
 		}
 	}

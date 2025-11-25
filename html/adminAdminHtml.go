@@ -26,3 +26,19 @@ func Admins(c *gin.Context) {
 
 	c.HTML(http.StatusOK, "admin_admins.html", pageData)
 }
+
+func Updata(c *gin.Context) {
+	username, ok := until.GetAuthName(c)
+	if !ok {
+		c.JSON(200, dto.NewAdminRedirectDto())
+		return
+	}
+
+	var pageData = dto.UdataDto{
+		LoginUser: username,
+		Title:     "在线升级",
+		Version:   until.GetVersion(),
+	}
+
+	c.HTML(http.StatusOK, "admin_updata.html", pageData)
+}

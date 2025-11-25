@@ -6,6 +6,7 @@ import (
 	"go-iptv/models"
 	"go-iptv/until"
 	"net/url"
+	"runtime"
 )
 
 func Admins(params url.Values) dto.ReturnJsonDto {
@@ -48,4 +49,34 @@ func Admins(params url.Values) dto.ReturnJsonDto {
 	return dto.ReturnJsonDto{Code: 1, Msg: "修改成功", Type: "success"}
 
 	// TODO
+}
+
+func UpdataCheck() dto.ReturnJsonDto {
+	a, v, err := until.CheckNewVer(until.GetVersion())
+	if err != nil {
+		return dto.ReturnJsonDto{Code: 0, Msg: "检查更新失败: " + err.Error(), Type: "danger"}
+	}
+	if a {
+		return dto.ReturnJsonDto{Code: 1, Msg: v, Type: "success"}
+	}
+	return dto.ReturnJsonDto{Code: 2, Msg: "当前已是最新版本", Type: "success"}
+}
+
+func UpdataDown() dto.ReturnJsonDto {
+	a, v, err := until.DownloadAndVerify(runtime.GOARCH)
+	if err != nil {
+		return dto.ReturnJsonDto{Code: 0, Msg: "下载失败: " + err.Error(), Type: "danger"}
+	}
+	if a {
+		return dto.ReturnJsonDto{Code: 1, Msg: v, Type: "success"}
+	}
+	return dto.ReturnJsonDto{Code: 0, Msg: "下载失败: " + v, Type: "danger"}
+}
+
+func Updata() dto.ReturnJsonDto {
+	err := until.UpdateSignal()
+	if err != nil {
+		return dto.ReturnJsonDto{Code: 0, Msg: "触发更新失败: " + err.Error(), Type: "danger"}
+	}
+	return dto.ReturnJsonDto{Code: 1, Msg: "已触发更新，请稍后...", Type: "success"}
 }

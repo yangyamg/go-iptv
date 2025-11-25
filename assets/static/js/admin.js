@@ -1261,3 +1261,82 @@ function resEng() {
         }
     });
 }
+
+function updata(){
+	lightyear.loading('show');
+	$.ajax({
+        url: "/admin/updata/check",
+        type: "GET",
+        success: function (data) {
+            if (data.code === 1) {
+				lightyear.loading('hide');
+                $.confirm({
+					title: '确认升级',
+					content: '新版本'+data.msg +'，是否下载？',
+					type: 'green',
+					buttons: {
+						confirm: {
+							text: '确认',
+							btnClass: 'btn-danger',
+							action: function () {
+								$.ajax({
+									url: "/admin/updata/down",
+									type: "GET", 
+									success: function (data) {
+									    if (data.code === 1) {
+											lightyear.loading('hide');
+											$.confirm({
+												title: '确认升级',
+												content: '新版本'+data.msg +'，是否升级？',
+												type: 'green',
+												buttons: {
+													confirm: {
+														text: '确认',
+														btnClass: 'btn-danger',
+														action: function () {
+															$.ajax({
+																url: "/admin/updata/updata",
+																type: "GET", 
+																success: function (data) {
+																	if (data.code === 1) {
+																		lightyear.loading('hide');
+																		lightyear.notify(data.msg, data.type, 1000);
+																	} else {
+																		lightyear.loading('hide');
+																		lightyear.notify(data.msg, data.type, 1000);
+																	}
+																}
+															});
+														}
+													},
+													cancel: {
+														text: '取消',
+														btnClass: 'btn-success'
+													}
+												}
+											});
+										} else {
+											lightyear.loading('hide');
+											lightyear.notify(data.msg, data.type, 1000);
+										}
+									}
+								});
+							}
+						},
+						cancel: {
+							text: '取消',
+							btnClass: 'btn-success'
+						}
+					}
+				});
+            } else {
+				lightyear.loading('hide');
+                lightyear.notify(data.msg, data.type, 1000);
+            }
+        },
+        error: function () {
+			lightyear.loading('hide');
+            lightyear.notify("操作失败", 'danger', 1000);
+        }
+    });
+}

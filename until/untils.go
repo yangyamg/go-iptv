@@ -556,11 +556,7 @@ func MergeAndUnique(a, b []string) []string {
 }
 
 func GetVersion() string {
-	data, err := os.ReadFile("/app/Version")
-	if err != nil {
-		return "2.3.0"
-	}
-	return strings.TrimSpace(string(data))
+	return Version
 }
 
 func EqualStringSets(a, b []string) bool {
