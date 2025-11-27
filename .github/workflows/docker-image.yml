@@ -48,10 +48,8 @@ jobs:
             echo "Building for $ARCH..."
             if [ "$ARCH" = "arm" ]; then
               GOARM=7 CGO_ENABLED=0 GOOS=linux GOARCH=arm go build -ldflags "-s -w" -o iptv_dist/iptv_arm main.go
-              cp license_all/license_arm iptv_dist/license_arm
             else
               CGO_ENABLED=0 GOOS=linux GOARCH=$ARCH go build -ldflags "-s -w" -o iptv_dist/iptv_${ARCH} main.go
-              cp license_all/license_${ARCH} iptv_dist/license_${ARCH}
             fi
           done
           ls -lh iptv_dist/
