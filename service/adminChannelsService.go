@@ -513,6 +513,9 @@ func SubmitSave(params url.Values) dto.ReturnJsonDto {
 	if err := dao.DB.Model(&models.IptvCategory{}).Where("id = ?", categoryId).First(&category).Error; err != nil {
 		return dto.ReturnJsonDto{Code: 0, Msg: "未找到当前记录", Type: "danger"}
 	}
+	if category.Type == "auto" {
+		return dto.ReturnJsonDto{Code: 0, Msg: "聚合分类不允许修改", Type: "danger"}
+	}
 
 	if category.Sort < 0 {
 		return dto.ReturnJsonDto{Code: 0, Msg: "默认分类不允许修改", Type: "danger"}

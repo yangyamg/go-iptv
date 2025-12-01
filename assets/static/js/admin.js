@@ -608,7 +608,9 @@ function getCategory(btn) {
 	$("#caproxy").prop("checked", cproxy === 1);
 	$("#carename").prop("checked", rename === 1);
 }
-function getChannels(id) {
+function getChannels(id,btn) {
+	var $tr = $(btn).closest("tr");
+	var ctype = $tr.find(".ca-type").data("value"); 
     $("#showcaId").val(id);
     $.ajax({
         url: "/admin/channels",
@@ -651,10 +653,11 @@ function getChannels(id) {
       ? '无' 
       : '<div id="logo_' + item.id + '" style="position:relative;"><img class="ch-logo" src="' + item.logo + '" alt="预览" style="background-color:black;height:38px;border:1px solid #ccc;border-radius:4px;cursor:pointer;"></div>') + '</td>' +
   '<td>' +
+  (ctype === "auto" ? '':
     '<button type="button" onclick="tdBtnPOST(this)" name="channelsStatus" value="' + item.id + '" class="btn btn-xs ' + (item.status === 1 ? 'btn-warning">下线' : 'btn-success">上线') + '</button>&nbsp;' +
 	'<button type="button" onclick="tdBtnPOST(this)" name="testResolutionOne" value="' + item.id + '" class="btn btn-xs btn-success">分辨率测试</button>&nbsp;' +
     '<button class="btn btn-xs btn-info" type="button" value="' + item.id + '" data-toggle="modal" onclick="editChannel(this)" data-target="#editchannel">编辑</button>&nbsp;' +
-    '<button class="btn btn-xs btn-danger" type="button" onclick="tdBtnPOST(this)" name="dellist" value="' + item.id + '">删除</button>' +
+    '<button class="btn btn-xs btn-danger" type="button" onclick="tdBtnPOST(this)" name="dellist" value="' + item.id + '">删除</button>')+
   '</td>';
                     tbody.appendChild(tr); 
                 });
