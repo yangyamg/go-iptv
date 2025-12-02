@@ -18,25 +18,27 @@ RUN chmod +x /app/iptv
 
 FROM swr.cn-north-4.myhuaweicloud.com/ddn-k8s/docker.io/alpine:latest
 
+ENV TZ=Asia/Shanghai
 VOLUME /config
 WORKDIR /app
 EXPOSE 80 8080
 
-ENV TZ=Asia/Shanghai
-RUN apk add --no-cache openjdk8 bash curl tzdata sqlite ffmpeg ;\
-    cp /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
-
 COPY ./client /client
 COPY ./apktool/* /usr/bin/
 COPY ./static /app/static
-COPY ./database /app/database
 COPY ./config.yml /app/config.yml
 COPY ./README.md  /app/README.md
 COPY ./logo /app/logo
+COPY ./dictionary.txt /app/dictionary.txt
+
+RUN apk add --no-cache openjdk8 bash curl tzdata sqlite ffmpeg ;\
+    cp /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone ;\
+    chmod 777 -R /usr/bin/apktool*
+    
+COPY ./database /app/database
+COPY ./alias.json /app/alias.json
 COPY ./ChangeLog.md /app/ChangeLog.md
 COPY ./Version /app/Version
-COPY ./alias.json /app/alias.json
-COPY ./dictionary.txt /app/dictionary.txt
 COPY ./license_all/Version_lic /app/Version_lic
 
 COPY --from=builder /app/iptv .
