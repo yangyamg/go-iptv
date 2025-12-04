@@ -29,7 +29,7 @@ func main() {
 	}
 
 	build := true
-	if os.Getenv("NOBUILD") == "true" {
+	if os.Getenv("NOBUILD") == "true" || os.Getenv("IPTVDEV") == "true" {
 		build = false
 	}
 
@@ -50,7 +50,7 @@ func main() {
 	}
 
 	var debug bool = false
-	if os.Getenv("DEBUG") == "true" {
+	if os.Getenv("DEBUG") == "true" || os.Getenv("IPTVDEV") == "true" {
 		debug = true
 	}
 
@@ -68,7 +68,7 @@ func main() {
 
 	bootstrap.InitAlias() // 初始化epg别名
 
-	if os.Getenv("IPTVDEV") != "true" {
+	if os.Getenv("NOLICENSE") != "true" {
 		go bootstrap.InitLicense() // 初始化授权信息
 	}
 

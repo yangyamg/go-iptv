@@ -72,7 +72,6 @@ func GetUrlData(url string, ua ...string) string {
 
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
-		log.Println("HTTP请求创建失败: ", err)
 		return ""
 	}
 
@@ -81,14 +80,12 @@ func GetUrlData(url string, ua ...string) string {
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		log.Println("HTTP请求失败:", err)
 		return ""
 	}
 	defer resp.Body.Close()
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		log.Println("读取响应失败:", err)
 		return ""
 	}
 
@@ -645,4 +642,52 @@ func ReadFile(path string) string {
 		return ""
 	}
 	return strings.TrimSpace(string(data))
+}
+
+func ParseURL(raw string) (scheme, host string, port int64) {
+	if raw == "" {
+		return "http", "", 80
+	}
+
+	// 如果没有协议，补上 http:// 以便 url.Parse 识别
+	if !strings.Contains(raw, "://") {
+		raw = "http://" + raw
+	}
+
+	u, err := url.Parse(raw)
+	if err != nil {
+		return "http", "", 80
+	}
+
+	// 协议处理
+	scheme = u.Scheme
+	if scheme == "" {
+		scheme = "http"
+	}
+
+	// 主机部分没找到返回空
+	if u.Host == "" {
+		return scheme, "", 80
+	}
+
+	// 分离 host 与 port
+	h, p, err := net.SplitHostPort(u.Host)
+	if err != nil {
+		// 没端口，则把整个 Host 当作域名/IP
+		host = u.Host
+		port = 80
+	} else {
+		host = h
+		port, _ = strconv.ParseInt(p, 10, 64)
+	}
+
+	// 默认端口
+	if port == 0 {
+		if scheme == "https" {
+			port = 443
+		} else {
+			port = 80
+		}
+	}
+	return
 }

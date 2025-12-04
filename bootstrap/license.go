@@ -11,7 +11,7 @@ func InitLicense() {
 	log.Println("引擎初始化中")
 	ws, err := dao.ConLicense("ws://127.0.0.1:81/ws")
 	if err != nil {
-		log.Println("引擎初始化错误")
+		log.Println("引擎初始化错误: ", err)
 		return
 	}
 	dao.WS = ws

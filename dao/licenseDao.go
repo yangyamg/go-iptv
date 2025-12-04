@@ -4,7 +4,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"go-iptv/dto"
+	"io"
 	"log"
+	"net/http"
+	"os/exec"
+	"strings"
 	"sync"
 	"time"
 
@@ -45,6 +49,9 @@ type WSClient struct {
 
 // 创建连接（带自动重连）
 func ConLicense(url string) (*WSClient, error) {
+	if !IsRunning() {
+		return nil, fmt.Errorf("引擎未启动")
+	}
 	client := &WSClient{
 		url:   url,
 		done:  make(chan struct{}),
@@ -62,6 +69,9 @@ func ConLicense(url string) (*WSClient, error) {
 }
 
 func (c *WSClient) connect() error {
+	if !IsRunning() {
+		return fmt.Errorf("引擎未启动")
+	}
 	var err error
 	for i := 1; i <= c.retry; i++ {
 		dialer := websocket.Dialer{
@@ -100,6 +110,9 @@ func (c *WSClient) IsOnline() bool {
 // -------------------- 心跳机制 --------------------
 
 func (c *WSClient) heartbeat() {
+	if !IsRunning() {
+		return
+	}
 	log.Println("启动心跳检测...")
 	ticker := time.NewTicker(5 * time.Second)
 	defer ticker.Stop()
@@ -145,13 +158,50 @@ func (c *WSClient) reconnect() {
 		log.Println("✅ 重连成功")
 	}
 }
+func IsRunning() bool {
+	cmd := exec.Command("bash", "-c", "ps -ef | grep '/license' | grep -v grep")
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		return checkRun()
+	}
+	return strings.Contains(string(output), "license")
+}
+
+func checkRun() bool {
+	defaultUA := "Go-http-client/1.1"
+	useUA := defaultUA
+
+	req, err := http.NewRequest("GET", "http://127.0.0.1:81/", nil)
+	if err != nil {
+		return false
+	}
+
+	req.Header.Set("User-Agent", useUA)
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return false
+	}
+	defer resp.Body.Close()
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return false
+	}
+
+	return strings.Contains(string(body), "ok")
+}
 
 // -------------------- 消息交互 --------------------
 
 // 发送 JSON 并接收响应
 func (c *WSClient) SendWS(req Request) (Response, error) {
-	if !c.IsOnline() {
+	if !IsRunning() {
 		return Response{}, fmt.Errorf("引擎未启动")
+	}
+	if !c.IsOnline() {
+		return Response{}, fmt.Errorf("引擎连接失败")
 	}
 	c.lock.Lock()
 	defer c.lock.Unlock()

@@ -61,6 +61,7 @@ type Proxy struct {
 	Status int64  `mapstructure:"status" json:"status" yaml:"status"`
 	Port   int64  `mapstructure:"port" json:"port" yaml:"port"`
 	PAddr  string `mapstructure:"addr" json:"addr" yaml:"addr"`
+	Scheme string `mapstructure:"scheme" json:"scheme" yaml:"scheme"`
 }
 
 type Resolution struct {

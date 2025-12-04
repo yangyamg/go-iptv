@@ -40,9 +40,16 @@ func License(c *gin.Context) {
 		pageData.Lic = dao.Lic
 		cfg := dao.GetConfig()
 		pageData.Proxy = cfg.Proxy.Status
-		pageData.ProxyAddr = cfg.Proxy.PAddr
 
-		pageData.Port = cfg.Proxy.Port
+		if cfg.Proxy.PAddr == "" {
+			cfg.Proxy.PAddr = cfg.ServerUrl
+			pageData.Scheme, pageData.ProxyAddr, pageData.Port = until.ParseURL(cfg.ServerUrl)
+		} else {
+			pageData.ProxyAddr = cfg.Proxy.PAddr
+			pageData.Scheme = cfg.Proxy.Scheme
+			pageData.Port = cfg.Proxy.Port
+		}
+
 		pageData.AutoRes = cfg.Resolution.Auto
 		pageData.DisCh = cfg.Resolution.DisCh
 		pageData.EpgFuzz = cfg.Epg.Fuzz

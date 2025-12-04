@@ -3,7 +3,9 @@ package until
 import (
 	"encoding/json"
 	"go-iptv/dao"
+	"io"
 	"log"
+	"net/http"
 	"os/exec"
 	"strings"
 )
@@ -12,10 +14,35 @@ func IsRunning() bool {
 	cmd := exec.Command("bash", "-c", "ps -ef | grep '/license' | grep -v grep")
 	output, err := cmd.CombinedOutput()
 	if err != nil {
-		log.Printf("引擎进程出错: %v", err)
-		return false
+		return checkRun()
 	}
 	return strings.Contains(string(output), "license")
+}
+
+func checkRun() bool {
+	defaultUA := "Go-http-client/1.1"
+	useUA := defaultUA
+
+	req, err := http.NewRequest("GET", "http://127.0.0.1:81/", nil)
+	if err != nil {
+		return false
+	}
+
+	req.Header.Set("User-Agent", useUA)
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return false
+	}
+	defer resp.Body.Close()
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return false
+	}
+
+	return strings.Contains(string(body), "ok")
 }
 
 func RestartLic() bool {
@@ -32,7 +59,7 @@ func RestartLic() bool {
 
 	ws, err := dao.ConLicense("ws://127.0.0.1:81/ws")
 	if err != nil {
-		log.Println("引擎连接失败")
+		log.Println("引擎连接失败：", err)
 		return false
 	}
 	dao.WS = ws

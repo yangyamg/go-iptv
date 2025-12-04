@@ -6,7 +6,7 @@
 		<div class="row">
             <div class="col-lg-6">
                 <div class="card">
-                    <div class="card-header"><h4>授权信息</h4>
+                    <div class="card-header"><h4>授权信息&nbsp;<span style="cursor: default;" class="badge bg-primary" data-container="body" data-toggle="popover" data-placement="bottom" data-content="引擎启动且连接状态下注册账号后登录即可获得一天的试用时长，赞助用户可以到qq群中把赞助截图和邮箱发给群主，或发送到邮箱 1249851115@qq.com 获取授权" title="" data-original-title="">?</span></h4>
                     {{ if eq .Lic.Status 1 }}
                     <div style="position: absolute; top: 10px; right: 25px; margin: 0;">
                         {{ .Lic.Name }}&nbsp;&nbsp;
@@ -123,20 +123,30 @@
                             <div class="card-body" {{ if eq .Lic.Tpye 0 }}style="pointer-events: none; opacity: 0.6;"{{ end }}>
                                 <form method="post" action="/admin/license">
                                 <div class="input-group"> 
-                                    <label>中转地址:</label>&nbsp;&nbsp;<button class="btn btn-label btn-danger" type="button" id="lockBtn" onclick="proxyLock(this)"
-                                        style=" display:inline-flex; align-items:center; justify-content:center; padding:4px 8px;" {{ if eq .Proxy 1 }}disabled{{ end }}>
-                                        <i class="mdi mdi-lock" style="margin:0; padding:0; vertical-align:middle;"></i>
-                                    </button>
-                                    <div class="input-group">
-                                        <div><input class="form-control" type="text" id="pAddr" name="pAddr" value="{{ .ProxyAddr }}" style="margin-top: 15px;" placeholder="源中转的地址"  readonly></div>
-                                        <small class="help-block">提示：源中转的地址，当后台和源中转使用不同域名或ip时，请手动修改这个地址</small>
+                                    <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                                        <!-- <label style="white-space: nowrap;">中转地址:</label> -->
+
+                                        <div id="scheme" style="width: 70px;"></div>
+                                        <span style=" color: #000000;">://</span>
+
+                                        <input class="form-control" type="text" id="pAddr" name="pAddr"
+                                            value="{{ .ProxyAddr }}" placeholder="源中转的地址" {{ if eq .Proxy 1 }}disabled{{ end }}
+                                            style="width: 250px; min-width: 150px; flex: 1;">
+
+                                        <span style="color: #000000;">:</span>
+
+                                        <input class="form-control" type="number" name="port" value="{{ .Port }}"
+                                            placeholder="端口 (82-65535)"
+                                            min="82" max="65535" step="1"
+                                            {{ if eq .Proxy 1 }}disabled{{ end }}
+                                            style="width: 85px; min-width: 85px; flex: 0 0 auto;">
                                     </div>
+                                    <small class="help-block" style="margin-left: 10px;">
+                                        提示：源中转的地址，当后台和源中转使用不同域名或ip时，请手动修改这个地址, 端口为容器8080映射出来的端口，若有外网映射，请改为外网端口
+                                    </small>
                                 </div>
                                 <div class="form-inline">
-                                    <div class="form-group" style="margin-right: 15px;">
-                                        <label>端口：</label>
-                                        <input class="form-control" type="number" name="port" value="{{ .Port }}" placeholder="82-65535之间" min="82" max="65535" step="1" {{ if eq .Proxy 1 }}disabled{{ end }}>
-                                    </div>
+                                    
                                     <div class="form-group" style="margin-right: 15px;">
                                         <label>开启中转:</label>
                                         <label class="lyear-switch switch-primary">
@@ -144,7 +154,6 @@
                                             <span></span>
                                         </label>
                                     </div>
-                                    <small class="help-block">提示：端口为容器8080映射出来的端口，若有外网映射，请改为外网端口</small>
                                 </div>
                                 </form>
                             </div>
@@ -208,6 +217,37 @@
 	</div>
     <script>
         console.log("入群密码后半段： 599f2b69");
+var scheme = xmSelect.render({
+	el: '#scheme', 
+	name: 'scheme',
+	radio: true,
+	autoRow: true,
+	tips: '协议类型', 
+    {{ if eq .Proxy 1 }}disabled: true,{{ end }}
+	clickClose: true,
+	pageSize: 2,
+	direction: 'down',
+    style: {
+		weight: '50px',
+	},
+    model: {
+        icon: 'hidden',
+		label: {
+			type: 'text',
+		}
+	},
+	data: [
+        {{ if eq .Scheme "https" }}
+		{name: 'http', value: 'http'},
+        {name: 'https', value: 'https', selected: true},
+		{{ else }}
+		{name: 'http', value: 'http', selected: true},
+        {name: 'https', value: 'https'},
+		{{ end }}
+	]
+})
+
+
     </script>
 </main>
 

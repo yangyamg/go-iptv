@@ -3,6 +3,7 @@ package dto
 type AdminLicenseDto struct {
 	LoginUser string `json:"loginuser"`
 	Title     string `json:"title"`
+	Scheme    string `json:"scheme"`
 	Proxy     int64  `json:"proxy"`
 	Port      int64  `json:"port"`
 	ProxyAddr string `json:"proxy_addr"`

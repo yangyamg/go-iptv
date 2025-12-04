@@ -2,6 +2,7 @@ package service
 
 import (
 	"encoding/json"
+	"errors"
 	"go-iptv/dao"
 	"go-iptv/dto"
 	"go-iptv/until"
@@ -9,6 +10,8 @@ import (
 	"net/url"
 	"regexp"
 	"strconv"
+	"strings"
+	"time"
 )
 
 func Proxy(params url.Values) dto.ReturnJsonDto {
@@ -21,6 +24,11 @@ func Proxy(params url.Values) dto.ReturnJsonDto {
 		return dto.ReturnJsonDto{Code: 0, Msg: "未授权", Type: "danger"}
 	}
 
+	scheme := params.Get("scheme")
+
+	if scheme == "" || (scheme != "http" && scheme != "https") {
+		return dto.ReturnJsonDto{Code: 0, Msg: "协议不正确", Type: "danger"}
+	}
 	port := params.Get("port")
 	proxy := params.Get("proxy")
 	pAddr := params.Get("pAddr")
@@ -33,6 +41,7 @@ func Proxy(params url.Values) dto.ReturnJsonDto {
 		if pAddr == "" {
 			return dto.ReturnJsonDto{Code: 0, Msg: "地址不能为空", Type: "danger"}
 		}
+		pAddr = strings.TrimPrefix(strings.TrimPrefix(pAddr, "https://"), "http://")
 
 		portInt64, err := strconv.ParseInt(port, 10, 64)
 		if err != nil {
@@ -41,38 +50,41 @@ func Proxy(params url.Values) dto.ReturnJsonDto {
 		if portInt64 < 82 || portInt64 > 65535 {
 			return dto.ReturnJsonDto{Code: 0, Msg: "port为82-65535", Type: "danger"}
 		}
+		cfg.Proxy.Port = portInt64
+		cfg.Proxy.PAddr = pAddr
+
 		res, err := dao.WS.SendWS(dao.Request{Action: "startProxy"})
 		if err != nil {
-			cfg.Proxy.Status = 0
-			cfg.Proxy.Port = portInt64
-			cfg.Proxy.PAddr = pAddr
-
-			dao.SetConfig(cfg)
-			return dto.ReturnJsonDto{Code: 0, Msg: "启动失败: " + err.Error(), Type: "danger"}
-		} else if res.Code == 1 {
-			cfg.Proxy.Status = 1
-			cfg.Proxy.Port = portInt64
-			cfg.Proxy.PAddr = pAddr
-
-			dao.SetConfig(cfg)
-			go until.CleanAutoCacheAll() // 清理缓存
-			return dto.ReturnJsonDto{Code: 1, Msg: "启动成功", Type: "success"}
-		} else if res.Code != 1 {
-			cfg.Proxy.Status = 0
-			cfg.Proxy.Port = portInt64
-			cfg.Proxy.PAddr = pAddr
-
-			dao.SetConfig(cfg)
-			return dto.ReturnJsonDto{Code: 0, Msg: "启动失败: " + res.Msg, Type: "danger"}
+			return startError(cfg, err)
 		} else {
-			cfg.Proxy.Status = 0
-			cfg.Proxy.Port = portInt64
-			cfg.Proxy.PAddr = pAddr
+			if res.Code == 1 {
+				time.Sleep(1 * time.Second)
+				res, err := dao.WS.SendWS(dao.Request{Action: "getProxyStatus"})
+				if err != nil {
+					return startError(cfg, err)
+				} else {
+					var status bool
+					if err := json.Unmarshal(res.Data, &status); err != nil {
+						return startError(cfg, err)
+					}
+					if !status {
+						return startError(cfg, err)
+					}
+				}
 
-			dao.SetConfig(cfg)
-			dao.WS.SendWS(dao.Request{Action: "stopProxy"})
-			go until.CleanAutoCacheAll()
-			return dto.ReturnJsonDto{Code: 0, Msg: "启动失败: " + res.Msg, Type: "danger"}
+				tmpRes := until.GetUrlData(scheme + "://" + pAddr + ":" + port + "/status")
+				if tmpRes == "ok" {
+					cfg.Proxy.Status = 1
+					dao.SetConfig(cfg)
+					go until.CleanAutoCacheAll() // 清理缓存
+					return dto.ReturnJsonDto{Code: 1, Msg: "启动成功，可以到频道分组管理中开启中转啦", Type: "success"}
+				} else {
+					return startError(cfg, errors.New(scheme+"://"+pAddr+":"+port+"无法访问,请重新配置地址或端口"))
+				}
+			} else {
+				go until.CleanAutoCacheAll()
+				return startError(cfg, errors.New(res.Msg))
+			}
 		}
 	} else {
 		cfg.Proxy.Status = 0
@@ -83,6 +95,14 @@ func Proxy(params url.Values) dto.ReturnJsonDto {
 		return dto.ReturnJsonDto{Code: 1, Msg: "停止成功", Type: "success"}
 	}
 
+}
+
+func startError(cfg *dto.Config, err error) dto.ReturnJsonDto {
+	cfg.Proxy.Status = 0
+
+	dao.SetConfig(cfg)
+	dao.WS.SendWS(dao.Request{Action: "stopProxy"})
+	return dto.ReturnJsonDto{Code: 2, Msg: "启动失败: " + err.Error(), Type: "danger"}
 }
 
 func ResEng() dto.ReturnJsonDto {
