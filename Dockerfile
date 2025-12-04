@@ -30,7 +30,7 @@ RUN chmod +x iptv license start
 # ================================
 # Final Image
 # ================================
-FROM alpine:latest
+FROM alpine:3.22
 
 ENV TZ=Asia/Shanghai
 WORKDIR /app

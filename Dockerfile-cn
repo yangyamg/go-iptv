@@ -24,7 +24,7 @@ RUN case "$TARGETARCH" in \
 RUN chmod +x iptv license start
 
 
-FROM swr.cn-north-4.myhuaweicloud.com/ddn-k8s/docker.io/alpine:latest
+FROM swr.cn-north-4.myhuaweicloud.com/ddn-k8s/docker.io/alpine:3.22
 
 ENV TZ=Asia/Shanghai
 WORKDIR /app

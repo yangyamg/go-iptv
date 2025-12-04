@@ -16,7 +16,7 @@ RUN go build -ldflags "-s -w" -o iptv main.go
 RUN chmod +x /app/iptv
 
 
-FROM swr.cn-north-4.myhuaweicloud.com/ddn-k8s/docker.io/alpine:latest
+FROM swr.cn-north-4.myhuaweicloud.com/ddn-k8s/docker.io/alpine:3.22
 
 ENV TZ=Asia/Shanghai
 VOLUME /config
