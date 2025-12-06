@@ -691,3 +691,12 @@ func ParseURL(raw string) (scheme, host string, port int64) {
 	}
 	return
 }
+
+func FixPerm(path string) error {
+	return filepath.Walk(path, func(p string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+		return os.Chmod(p, 0777)
+	})
+}

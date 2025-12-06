@@ -19,6 +19,12 @@ func Install() (bool, string) {
 		return false, "请映射config文件夹到容器/config中"
 	}
 
+	err := os.Chmod("/config", 0777)
+	if err != nil {
+		log.Println("/config文件夹权限设置失败,请手动设置")
+		return false, "/config文件夹权限设置失败,请手动设置"
+	}
+
 	if !until.Exists("/app/database/sqlite.sql") || !until.Exists("/app/config.yml") {
 		log.Println("缺少必要的文件")
 		return false, "缺少必要的文件"
@@ -91,6 +97,11 @@ func Install() (bool, string) {
 		return false, "初始化数据库失败: " + stderr.String()
 	}
 	log.Println("初始化数据库完成")
+	err = os.Chmod("/config/iptv.db", 0777)
+	if err != nil {
+		log.Println("数据库权限设置失败,请手动设置")
+		return false, "数据库权限设置失败,请手动设置"
+	}
 	log.Println("加载数据库...")
 	dao.InitDB("/config/iptv.db")
 	log.Println("初始化EPG缓存...")
@@ -120,8 +131,16 @@ func Install() (bool, string) {
 		return false, "创建install.lock失败:" + err.Error()
 	}
 	defer file.Close()
+
+	err = until.FixPerm("/config")
+	if err != nil {
+		log.Println("/config文件夹权限设置失败,请手动设置")
+		return false, "/config文件夹权限设置失败,请手动设置"
+	}
+
 	InitJwtKey()
 	initIptvEpgList()
+	until.RestartLic()
 	return true, "success"
 }
 
