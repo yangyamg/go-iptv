@@ -115,13 +115,40 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Mirror to Gitee via SSH
-        uses: Yikun/hub-mirror-action@master
-        with:
-          src: github/${{ github.repository_owner }}
-          dst: gitee/${{ secrets.GITEE_USERNAME }}
-          dst_key: ${{ secrets.GITEE_SSH_KEY }}
-          dst_token: ${{ secrets.GITEE_TOKEN }}
-          white_list: "${{ github.event.repository.name }}"
-          force_update: true
-          debug: true
+      # ---同步 Release 到 Gitee---
+      - name: Upload Release to Gitee
+        env:
+          GITEE_TOKEN: ${{ secrets.GITEE_TOKEN }}
+          GITEE_USER: ${{ secrets.GITEE_USERNAME }}
+          REPO_NAME: ${{ github.event.repository.name }}
+          TAG_NAME: ${{ env.IMAGE_VERSION }}
+        run: |
+          # 判断是否 beta 版本
+          if [[ "$TAG_NAME" == *"beta"* ]]; then
+            PRERELEASE=true
+          else
+            PRERELEASE=false
+          fi
+
+          # 创建 Gitee Release
+          curl -s -X POST "https://gitee.com/api/v5/repos/$GITEE_USER/$REPO_NAME/releases" \
+            -H "Content-Type: application/json" \
+            -H "Authorization: token $GITEE_TOKEN" \
+            -d "{
+              \"tag_name\": \"$TAG_NAME\",
+              \"name\": \"Release $TAG_NAME\",
+              \"description\": \"GitHub Release synced\",
+              \"draft\": false,
+              \"prerelease\": $PRERELEASE
+            }"
+
+          # 获取 Release ID
+          RELEASE_ID=$(curl -s "https://gitee.com/api/v5/repos/$GITEE_USER/$REPO_NAME/releases" \
+            -H "Authorization: token $GITEE_TOKEN" | jq ".[] | select(.tag_name==\"$TAG_NAME\") | .id")
+
+          # 上传资产文件
+          for f in iptv_dist/*; do
+            echo "Uploading $f ..."
+            curl -X POST "https://gitee.com/api/v5/repos/$GITEE_USER/$REPO_NAME/releases/$RELEASE_ID/assets?access_token=$GITEE_TOKEN" \
+              -F "file=@$f"
+          done
