@@ -120,11 +120,10 @@ jobs:
       - name: Mirror to Gitee
         uses: Yikun/hub-mirror-action@master
         with:
-          src: github/${{ github.repository }}
-          dst: gitee/${{ secrets.GITEE_USERNAME }}/${{ secrets.GITEE_REPO }}
-          src-token: ${{ secrets.GITHUB_TOKEN }}
-          dst-token: ${{ secrets.GITEE_TOKEN }}
-          account-type: user
-          force-update: true
-          static-list: "true"
-          include-release: true
+          src: github/${{ github.repository_owner }}
+          dst: gitee/${{ secrets.GITEE_USERNAME }}
+          dst_token: ${{ secrets.GITEE_TOKEN }}
+          dst_key: ${{ secrets.GITEE_SSH_KEY }}
+          static_list: "${{ github.event.repository.name }}"
+          force_update: true
+          account_type: user
