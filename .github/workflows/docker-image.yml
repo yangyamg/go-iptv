@@ -126,3 +126,4 @@ jobs:
           static_list: "${{ github.event.repository.name }}"
           force_update: true
           account_type: user
+          lfs: false
