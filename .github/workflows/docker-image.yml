@@ -139,7 +139,8 @@ jobs:
               \"name\": \"Release $TAG_NAME\",
               \"description\": \"GitHub Release synced\",
               \"draft\": false,
-              \"prerelease\": $PRERELEASE
+              \"prerelease\": $PRERELEASE,
+              \"target_commitish\": \"main\"
             }"
 
           # 获取 Release ID
@@ -148,7 +149,10 @@ jobs:
 
           # 上传资产文件
           for f in iptv_dist/*; do
-            echo "Uploading $f ..."
-            curl -X POST "https://gitee.com/api/v5/repos/$GITEE_USER/$REPO_NAME/releases/$RELEASE_ID/assets?access_token=$GITEE_TOKEN" \
+            filename=$(basename "$f")
+            echo "Uploading $filename ..."
+            curl -X POST "https://gitee.com/api/v5/repos/$GITEE_USER/$REPO_NAME/releases/$RELEASE_ID/assets" \
+              -F "access_token=$GITEE_TOKEN" \
+              -F "name=$filename" \
               -F "file=@$f"
           done
