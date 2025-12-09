@@ -15,6 +15,7 @@ type AdminLicenseDto struct {
 	DisCh       int64  `json:"dis_ch"`
 	EpgFuzz     int64  `json:"epg_fuzz"`
 	Aggregation int64  `json:"aggregation"`
+	ShortURL    int64  `json:"short_url"`
 }
 
 type Lic struct {

@@ -131,6 +131,8 @@ function submitFormPOST(btn) {
 			var sub = $(btn).closest('.modal');
 			sub.modal('hide');
 			loadPage(window.location.href);
+		}else if (data.code === 5) {
+		    location.reload();
 		}
 	})
 	.catch(err => {
@@ -1116,6 +1118,8 @@ function getnewkey(btn){
 										$("#rssm3u").val(item.url);
 									}else if (item.type === 'epg'){
 										$("#rssepg").val(item.url);
+									}else if (item.type === 'ku9'){
+										$("#ku9txt").val(item.url);
 									}
 								});
 							}else{

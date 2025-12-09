@@ -13,5 +13,10 @@ func RssRouter(r *gin.Engine, path string) {
 		router.GET("/getRss/:token/paylist.txt", api.GetTXTRssTxt)
 		router.GET("/ku9/:token/paylist.txt", api.GetTXTRssTxtKu9)
 		router.GET("/epg/:token/e.xml", api.GetTXTRssEpg)
+
+		router.GET("/r/:key/p.m3u", api.GetTXTRssM3uShortURL)
+		router.GET("/r/:key/p.txt", api.GetTXTRssTxtShortURL)
+		router.GET("/k/:key/p.txt", api.GetTXTRssTxtKu9ShortURL)
+		router.GET("/r/:key/e.xml", api.GetTXTRssEpgShortURL)
 	}
 }

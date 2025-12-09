@@ -252,3 +252,45 @@ func Logout() dto.ReturnJsonDto {
 	}
 	return dto.ReturnJsonDto{Code: 1, Msg: "退出成功", Type: "success"}
 }
+
+func Dispay(params url.Values) dto.ReturnJsonDto {
+	dispay := params.Get("dispay")
+	cfg := dao.GetConfig()
+	if dao.Lic.Type != 2 {
+		cfg.System.DisPay = 0
+		dao.SetConfig(cfg)
+		return dto.ReturnJsonDto{Code: 0, Msg: "未授权", Type: "danger"}
+	}
+	if dispay == "1" || dispay == "true" || dispay == "on" {
+		_, err := until.CheckLicVer("v1.5.19")
+		if err != nil {
+			return dto.ReturnJsonDto{Code: 0, Msg: err.Error(), Type: "danger"}
+		}
+		cfg.System.DisPay = 1
+	} else {
+		cfg.System.DisPay = 0
+	}
+	dao.SetConfig(cfg)
+	return dto.ReturnJsonDto{Code: 5, Msg: "设置成功,刷新页面生效", Type: "success"}
+}
+
+func ShortURL(params url.Values) dto.ReturnJsonDto {
+	shortURL := params.Get("shortURL")
+	cfg := dao.GetConfig()
+	if dao.Lic.Type == 0 {
+		cfg.System.ShortURL = 0
+		dao.SetConfig(cfg)
+		return dto.ReturnJsonDto{Code: 0, Msg: "未授权", Type: "danger"}
+	}
+	if shortURL == "1" || shortURL == "true" || shortURL == "on" {
+		_, err := until.CheckLicVer("v1.5.19")
+		if err != nil {
+			return dto.ReturnJsonDto{Code: 0, Msg: err.Error(), Type: "danger"}
+		}
+		cfg.System.ShortURL = 1
+	} else {
+		cfg.System.ShortURL = 0
+	}
+	dao.SetConfig(cfg)
+	return dto.ReturnJsonDto{Code: 1, Msg: "设置成功", Type: "success"}
+}

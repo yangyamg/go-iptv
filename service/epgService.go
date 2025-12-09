@@ -50,12 +50,27 @@ func GetEpg(name string) dto.ApkResponse {
 		res = getEpgCntv(epg.Name)
 		if len(res.Data) <= 0 {
 			var epgFromList []models.IptvEpgList
-			dao.DB.Where("epg_id in ?", fromList).Find(&epgFromList)
-			if len(epgFromList) > 0 {
+			dao.DB.Where("id in ?", fromList).Find(&epgFromList)
+			if len(epgFromList) == 0 {
 				return res
 			}
 			for _, epgFrom := range epgFromList {
 				res = getEpgXml(epgFrom.ID, epg.Name)
+				if len(res.Data) > 0 {
+					return res
+				}
+			}
+		}
+	} else {
+		var epgFromList []models.IptvEpgList
+		dao.DB.Where("id in ?", fromList).Find(&epgFromList)
+		if len(epgFromList) == 0 {
+			return res
+		}
+		for _, epgFrom := range epgFromList {
+			res = getEpgXml(epgFrom.ID, epg.Name)
+			if len(res.Data) > 0 {
+				return res
 			}
 		}
 	}

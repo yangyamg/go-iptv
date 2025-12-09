@@ -77,6 +77,11 @@ type Epg struct {
 	Fuzz int64 `mapstructure:"fuzz" json:"fuzz" yaml:"fuzz"`
 }
 
+type System struct {
+	DisPay   int64 `mapstructure:"dispay" json:"dispay" yaml:"dispay"`
+	ShortURL int64 `mapstructure:"short_url" json:"short_url" yaml:"short_url"`
+}
+
 type Config struct {
 	ServerUrl   string        `mapstructure:"server_url" json:"server_url" yaml:"server_url"`
 	Build       Build         `mapstructure:"build" json:"build" yaml:"build"`
@@ -89,6 +94,7 @@ type Config struct {
 	Resolution  Resolution    `mapstructure:"resolution" json:"resolution" yaml:"resolution"`
 	Epg         Epg           `mapstructure:"epg" json:"epg" yaml:"epg"`
 	Aggregation Aggregation   `mapstructure:"aggregation" json:"aggregation" yaml:"aggregation"`
+	System      System        `mapstructure:"system" json:"system" yaml:"system"`
 	// Weather   Weather   `mapstructure:"weather" json:"weather" yaml:"weather"`
 	// Cache     Cache     `mapstructure:"cache" json:"cache" yaml:"cache"`
 	// EPGErrors EPGErrors `mapstructure:"epg_errors" json:"epg_errors" yaml:"epg_errors"`

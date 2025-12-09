@@ -6,6 +6,7 @@ import (
 	"go-iptv/dto"
 	"go-iptv/models"
 	"go-iptv/until"
+	"log"
 	"time"
 )
 
@@ -52,9 +53,8 @@ func GetRssUrl(id, host string, getnewkey bool) dto.ReturnJsonDto {
 	if err != nil {
 		return dto.ReturnJsonDto{Code: 0, Msg: "生成key失败", Type: "danger"}
 	}
-
+	cfg := dao.GetConfig()
 	if getnewkey {
-		cfg := dao.GetConfig()
 		cfg.Rss.Key = until.Md5(time.Now().Format("2006-01-02 15:04:05"))
 		until.RssKey = []byte(cfg.Rss.Key)
 		dao.SetConfig(cfg)
@@ -66,12 +66,45 @@ func GetRssUrl(id, host string, getnewkey bool) dto.ReturnJsonDto {
 		return dto.ReturnJsonDto{Code: 0, Msg: "生成链接失败" + err.Error(), Type: "danger"}
 	}
 
+	if cfg.System.ShortURL == 1 && dao.Lic.Type != 0 {
+		wsRes, err := dao.WS.SendWS(dao.Request{Action: "getShortURLKey", Data: token})
+		if err == nil && wsRes.Code == 1 {
+			var key string
+			if err := json.Unmarshal(wsRes.Data, &key); err != nil {
+				log.Println("短订阅key解析错误:", err)
+			} else {
+				res = append(res, RssUrl{Type: "m3u8", Url: host + "/r/" + key + "/p.m3u"})
+				res = append(res, RssUrl{Type: "txt", Url: host + "/r/" + key + "/p.txt"})
+				res = append(res, RssUrl{Type: "ku9", Url: host + "/k/" + key + "/p.txt"})
+				res = append(res, RssUrl{Type: "epg", Url: host + "/r/" + key + "/e.xml"})
+				return dto.ReturnJsonDto{Code: 1, Msg: "订阅生成成功", Type: "success", Data: res}
+			}
+		}
+	}
+
 	res = append(res, RssUrl{Type: "m3u8", Url: host + "/getRss/" + token + "/paylist.m3u"})
 	res = append(res, RssUrl{Type: "txt", Url: host + "/getRss/" + token + "/paylist.txt"})
 	res = append(res, RssUrl{Type: "ku9", Url: host + "/ku9/" + token + "/paylist.txt"})
 	res = append(res, RssUrl{Type: "epg", Url: host + "/epg/" + token + "/e.xml"})
 
 	return dto.ReturnJsonDto{Code: 1, Msg: "订阅生成成功", Type: "success", Data: res}
+}
+
+func GetRssToken(key string) string {
+	cfg := dao.GetConfig()
+	if cfg.System.ShortURL == 1 && dao.Lic.Type != 0 {
+		wsRes, err := dao.WS.SendWS(dao.Request{Action: "getShortURLToken", Data: key})
+		if err == nil && wsRes.Code == 1 {
+			var token string
+			if err := json.Unmarshal(wsRes.Data, &token); err != nil {
+				log.Println("短订阅token解析错误:", err)
+				return ""
+			} else {
+				return token
+			}
+		}
+	}
+	return ""
 }
 
 func GetRss(token, host, t string) string {

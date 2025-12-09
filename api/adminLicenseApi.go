@@ -40,6 +40,10 @@ func License(c *gin.Context) {
 			res = service.Login(params)
 		case "logout":
 			res = service.Logout()
+		case "dispay":
+			res = service.Dispay(params)
+		case "shortURL":
+			res = service.ShortURL(params)
 		}
 
 	}

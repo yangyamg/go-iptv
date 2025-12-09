@@ -233,6 +233,48 @@
                             </div>
                         </div>
                     </div>
+                    <div class="col-lg-6">
+                        <div class="card">
+                            <div class="card-header"><h4>隐藏作者信息</h4>
+                            {{ if ne .Lic.Type 2 }} <span class="badge badge-danger">未授权</span>{{ end }}
+                            </div>
+                            <div class="card-body" {{ if ne .Lic.Type 2 }}style="pointer-events: none; opacity: 0.6;"{{ end }}>
+                                <form method="post" action="/admin/license">
+                                <div class="form-inline">
+                                    <div class="form-group" style="margin-right: 15px;">
+                                        <label>隐藏作者信息:</label>
+                                        <label class="lyear-switch switch-primary">
+                                            <input type="checkbox" id="dispay" name="dispay" onchange="submitFormPOST(this)" {{ if ne .Lic.Type 2 }}disabled{{else}}{{ if eq DisPay 1 }}checked{{ end }}{{ end }} />
+                                            <span></span>
+                                        </label>&nbsp;&nbsp;&nbsp;<span style=" color: #000000;">{{ if ne .Lic.Type 2 }}永久授权功能{{ end }}</span>
+                                    </div>
+                                    <small class="help-block">关闭左下角捐赠和作者信息</small>
+                                </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="card">
+                            <div class="card-header"><h4>短订阅链接</h4>
+                            {{ if eq .Lic.Type 0 }} <span class="badge badge-danger">未授权</span>{{ end }}
+                            </div>
+                            <div class="card-body" {{ if eq .Lic.Type 0 }}style="pointer-events: none; opacity: 0.6;"{{ end }}>
+                                <form method="post" action="/admin/license">
+                                <div class="form-inline">
+                                    <div class="form-group" style="margin-right: 15px;">
+                                        <label>短订阅链接开关:</label>
+                                        <label class="lyear-switch switch-primary">
+                                            <input type="checkbox" id="shortURL" name="shortURL" onchange="submitFormPOST(this)" {{ if eq .Lic.Type 0 }}disabled{{else}}{{if eq .ShortURL 1}}checked{{end}}{{ end }}/>
+                                            <span></span>
+                                        </label>
+                                    </div>
+                                    <small class="help-block">更短的订阅链接，方便电视遥控器输入  相对更容易泄露，外网使用谨慎开启</small>
+                                </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 			</div>
 		</div>

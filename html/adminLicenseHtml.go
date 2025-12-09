@@ -57,6 +57,7 @@ func License(c *gin.Context) {
 		if pageData.Lic.Exp != 0 {
 			pageData.Lic.ExpStr = time.Unix(pageData.Lic.Exp, 0).Format("2006-01-02 15:04:05")
 		}
+		pageData.ShortURL = cfg.System.ShortURL
 	}
 
 	if until.IsRunning() {

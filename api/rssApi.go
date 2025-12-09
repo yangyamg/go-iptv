@@ -55,6 +55,50 @@ func GetTXTRssM3u(c *gin.Context) {
 	c.String(200, service.GetRss(token, host, "m"))
 }
 
+func GetTXTRssM3uShortURL(c *gin.Context) {
+	key := c.Param("key")
+	if key == "" {
+		c.String(200, "key参数不存在")
+		return
+	}
+	scheme := GetClientScheme(c)
+
+	host := c.Request.Host
+	if !until.IsValidHost(host) {
+		c.String(200, "host不合法")
+		return
+	}
+	host = fmt.Sprintf("%s://%s", scheme, host)
+	token := service.GetRssToken(key)
+	if token == "" {
+		c.String(200, "token 参数不存在")
+		return
+	}
+	c.String(200, service.GetRss(token, host, "m"))
+}
+
+func GetTXTRssTxtShortURL(c *gin.Context) {
+	key := c.Param("key")
+	if key == "" {
+		c.String(200, "key参数不存在")
+		return
+	}
+	scheme := GetClientScheme(c)
+
+	host := c.Request.Host
+	if !until.IsValidHost(host) {
+		c.String(200, "host不合法")
+		return
+	}
+	host = fmt.Sprintf("%s://%s", scheme, host)
+	token := service.GetRssToken(key)
+	if token == "" {
+		c.String(200, "token 参数不存在")
+		return
+	}
+	c.String(200, service.GetRss(token, host, "t"))
+}
+
 func GetTXTRssTxt(c *gin.Context) {
 	token := c.Param("token")
 	if token == "" {
@@ -71,6 +115,28 @@ func GetTXTRssTxt(c *gin.Context) {
 	host = fmt.Sprintf("%s://%s", scheme, host)
 
 	c.String(200, service.GetRss(token, host, "t"))
+}
+
+func GetTXTRssTxtKu9ShortURL(c *gin.Context) {
+	key := c.Param("key")
+	if key == "" {
+		c.String(200, "key参数不存在")
+		return
+	}
+	scheme := GetClientScheme(c)
+
+	host := c.Request.Host
+	if !until.IsValidHost(host) {
+		c.String(200, "host不合法")
+		return
+	}
+	host = fmt.Sprintf("%s://%s", scheme, host)
+	token := service.GetRssToken(key)
+	if token == "" {
+		c.String(200, "token 参数不存在")
+		return
+	}
+	c.String(200, service.GetTxtKu9(token, host))
 }
 
 func GetTXTRssTxtKu9(c *gin.Context) {
@@ -91,6 +157,42 @@ func GetTXTRssTxtKu9(c *gin.Context) {
 	c.String(200, service.GetTxtKu9(token, host))
 }
 
+func GetTXTRssEpgShortURL(c *gin.Context) {
+	key := c.Param("key")
+	if key == "" {
+		c.String(200, "key参数不存在")
+		return
+	}
+	scheme := GetClientScheme(c)
+
+	host := c.Request.Host
+	if !until.IsValidHost(host) {
+		c.String(200, "host不合法")
+		return
+	}
+	host = fmt.Sprintf("%s://%s", scheme, host)
+	token := service.GetRssToken(key)
+	if token == "" {
+		c.String(200, "token 参数不存在")
+		return
+	}
+	tv := service.GetRssEpg(token, host)
+
+	output, err := xml.MarshalIndent(tv, "", "  ")
+	if err != nil {
+		c.String(200, "生成XML失败: %v", err)
+		return
+	}
+
+	// 加上 XML 文件头
+	xmlData := []byte(xml.Header + string(output))
+
+	c.Data(200, "text/xml", xmlData)
+}
+
+// GetTXTRssEpg 处理获取TXT格式RSS EPG的请求
+// 参数:
+//   - c: Gin框架的上下文对象，包含请求和响应信息
 func GetTXTRssEpg(c *gin.Context) {
 	token := c.Param("token")
 	if token == "" {
