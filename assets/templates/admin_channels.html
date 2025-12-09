@@ -48,6 +48,8 @@
 										<td style="display:none;" class="cl-id" data-value="{{ .ID }}">{{ .ID }}</td>
 										<td style="display:none;" class="cl-ua" data-value="{{ .UA }}">{{ .UA }}</td>
 										<td style="display:none;" class="cl-rename" data-value="{{ .ReName }}">{{ .ReName }}</td>
+										<td style="display:none;" class="cl-autogroup" data-value="{{ .AutoGroup }}">{{ .AutoGroup }}</td>
+										<td style="display:none;" class="cl-ku9" data-value="{{ .Ku9 }}">{{ .Ku9 }}</td>
 										<td align="center" class="cl-name" data-value="{{ .Name }}">{{ .Name }}</td>
 										<td align="center" class="cl-url" data-value="{{ .Url }}" style="max-width: 200px; 
 											word-wrap: break-word; 
@@ -77,7 +79,7 @@
 									<div class="modal-dialog" role="document">
 										<div class="modal-content">
 											<div class="modal-header">
-												<button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="$('#clId').val('');$('#listname').val('');$('#listurl').val('');$('#autocategory').prop('checked', false);$('#autogroup').prop('checked', false);$('#repeat').prop('checked', false);"><span aria-hidden="true">&times;</span></button>
+												<button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="$('#clId').val('');$('#listname').val('');$('#listurl').val('');$('#autocategory').prop('checked', false);$('#autogroup').prop('checked', false);$('#repeat').prop('checked', false);$('#lku9').prop('checked', false);"><span aria-hidden="true">&times;</span></button>
 												<h4 class="modal-title">外部列表</h4>
 											</div>
 											<form method="post" action="/admin/channels">
@@ -128,7 +130,7 @@
 												</div>
 												<div class="modal-footer">
 													<button type="button" onclick="submitFormPOST(this)" class="btn btn-primary" id="addthirdlist" name="addlist">确定</button>
-													<button type="button" class="btn btn-default" onclick="$('#clId').val('');$('#listname').val('');$('#listurl').val('');$('#autocategory').prop('checked', false);$('#autogroup').prop('checked', false);$('#repeat').prop('checked', false);" data-dismiss="modal">关闭</button>
+													<button type="button" class="btn btn-default" onclick="$('#clId').val('');$('#listname').val('');$('#listurl').val('');$('#autocategory').prop('checked', false);$('#autogroup').prop('checked', false);$('#repeat').prop('checked', false);$('#lku9').prop('checked', false);" data-dismiss="modal">关闭</button>
 												</div>
 											</form>
 										</div>

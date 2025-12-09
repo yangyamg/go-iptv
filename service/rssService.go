@@ -68,6 +68,7 @@ func GetRssUrl(id, host string, getnewkey bool) dto.ReturnJsonDto {
 
 	res = append(res, RssUrl{Type: "m3u8", Url: host + "/getRss/" + token + "/paylist.m3u"})
 	res = append(res, RssUrl{Type: "txt", Url: host + "/getRss/" + token + "/paylist.txt"})
+	res = append(res, RssUrl{Type: "ku9", Url: host + "/ku9/" + token + "/paylist.txt"})
 	res = append(res, RssUrl{Type: "epg", Url: host + "/epg/" + token + "/e.xml"})
 
 	return dto.ReturnJsonDto{Code: 1, Msg: "订阅生成成功", Type: "success", Data: res}
@@ -89,6 +90,19 @@ func GetRss(token, host, t string) string {
 	} else {
 		return until.Txt2M3u8(until.GetTxt(aesData.I), host, token)
 	}
+}
+
+func GetTxtKu9(token, host string) string {
+	aes := until.NewChaCha20(string(until.RssKey))
+	jsonStr, err := aes.Decrypt(token)
+	if err != nil {
+		return "订阅失败,token解密错误"
+	}
+	aesData, err := getAesType(jsonStr)
+	if err != nil {
+		return "订阅失败，token读取错误"
+	}
+	return until.GetTxtKu9(aesData.I)
 }
 
 func GetRssEpg(token, host string) dto.XmlTV {

@@ -553,6 +553,59 @@ func GetTxt(id int64) string {
 	}
 	cfg := dao.GetConfig()
 
+	for _, category := range categoryList {
+		var channels []models.IptvChannelShow
+		if !strings.Contains(category.Type, "auto") {
+			channels = CaGetChannels(category, false)
+		} else {
+			channels = GetAutoChannelList(category, false)
+		}
+		if len(channels) == 0 {
+			continue
+		}
+		res += category.Name + ",#genre#\n"
+		for _, channel := range channels {
+			if channel.Status == 1 {
+				if category.Proxy == 1 && cfg.Proxy.Status == 1 {
+					res += channel.Name + "," + channel.PUrl + "\n"
+					continue
+				}
+				res += channel.Name + "," + channel.Url + "\n"
+			}
+
+		}
+	}
+
+	if err := dao.Cache.Set(txtCaCheKey, []byte(res)); err != nil {
+		log.Println("订阅缓存设置失败:", err)
+		dao.Cache.Delete(txtCaCheKey)
+	}
+
+	return res
+}
+
+func GetTxtKu9(id int64) string {
+	var res string
+
+	txtCaCheKey := "rssMealTxt_" + strconv.FormatInt(id, 10)
+	if dao.Cache.Exists(txtCaCheKey) {
+		cacheData, err := dao.Cache.GetNotExpired(txtCaCheKey)
+		if err == nil {
+			return string(cacheData)
+		}
+	}
+
+	var meal models.IptvMeals
+	if err := dao.DB.Model(&models.IptvMeals{}).Where("id = ? and status = 1", id).First(&meal).Error; err != nil {
+		return res
+	}
+	categoryIdList := strings.Split(meal.Content, ",")
+	var categoryList []models.IptvCategory
+	if err := dao.DB.Model(&models.IptvCategory{}).Where("id in (?) and enable = 1", categoryIdList).Order("sort asc").Find(&categoryList).Error; err != nil {
+		return res
+	}
+	cfg := dao.GetConfig()
+
 	tmpGroup := make(map[string]string)
 
 	for _, category := range categoryList {
@@ -577,7 +630,7 @@ func GetTxt(id int64) string {
 			if category.UA == "" {
 				tmpGroup[caGroup] += caName + ",#genre#\n"
 			} else {
-				tmpGroup[caGroup] += fmt.Sprintf("%s,#genre#,HEADERS={\"User-Agent\":\"%s\"\n", caName, category.UA)
+				tmpGroup[caGroup] += fmt.Sprintf("%s,#genre#,HEADERS={\"User-Agent\":\"%s\"}\n", caName, category.UA)
 			}
 		}
 
@@ -602,7 +655,7 @@ func GetTxt(id int64) string {
 	}
 
 	if err := dao.Cache.Set(txtCaCheKey, []byte(res)); err != nil {
-		log.Println("epg缓存设置失败:", err)
+		log.Println("订阅缓存设置失败:", err)
 		dao.Cache.Delete(txtCaCheKey)
 	}
 

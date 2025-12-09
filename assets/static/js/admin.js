@@ -579,11 +579,15 @@ function getCategoryList(btn) {
 	var ca = $tr.find(".cl-a").data("value");
 	var cr = $tr.find(".cl-r").data("value");
 	var rename = $tr.find(".cl-rename").data("value");
+	var autogroup = $tr.find(".cl-autogroup").data("value");
+	var ku9 = $tr.find(".cl-ku9").data("value");
 	$("#clId").val(cid);
 	$("#listname").val(cname);
 	$("#listurl").val(curl);
 	$("#listua").val(cua);
 	$("#autocategory").prop("checked", ca === 1);
+	$("#autogroup").prop("checked", autogroup === 1);
+	$("#ku9").prop("checked", ku9 === 1);
 	$("#repeat").prop("checked", cr === 1);
 	$("#clrename").prop("checked", rename === 1);
 }
@@ -955,6 +959,8 @@ function rssPOST(btn) {
 					$("#rssm3u").val(item.url);
 				}else if (item.type === 'epg'){
 				    $("#rssepg").val(item.url);
+				}else if (item.type === 'ku9'){
+				    $("#ku9txt").val(item.url);
 				}
 			});
 		}else{

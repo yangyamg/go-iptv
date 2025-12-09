@@ -73,6 +73,24 @@ func GetTXTRssTxt(c *gin.Context) {
 	c.String(200, service.GetRss(token, host, "t"))
 }
 
+func GetTXTRssTxtKu9(c *gin.Context) {
+	token := c.Param("token")
+	if token == "" {
+		c.String(200, "token 参数不存在")
+		return
+	}
+	scheme := GetClientScheme(c)
+
+	host := c.Request.Host
+	if !until.IsValidHost(host) {
+		c.String(200, "host不合法")
+		return
+	}
+	host = fmt.Sprintf("%s://%s", scheme, host)
+
+	c.String(200, service.GetTxtKu9(token, host))
+}
+
 func GetTXTRssEpg(c *gin.Context) {
 	token := c.Param("token")
 	if token == "" {
