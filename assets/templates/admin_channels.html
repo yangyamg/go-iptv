@@ -224,7 +224,7 @@
 									<div class="modal-dialog" role="document">
 										<div class="modal-content">
 											<div class="modal-header">
-												<button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="$('#caId').val('');$('#caname').val('');$('#autoRe').val('');$('#ku9').val('');$('#rename').prop('checked', true);$('#caproxy').prop('checked', false);ruleEpgsXm.setValue([ '' ]);$('#autoRe').prop('checked', false);$('#autoEpgs').prop('checked', false);"><span aria-hidden="true">&times;</span></button>
+												<button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="$('#caId').val('');$('#caname').val('');$('#autoRe').val('');$('#ku9').val('');$('#rename').prop('checked', true);$('#caproxy').prop('checked', false);{{ if .ShowAuto }}ruleEpgsXm.setValue([ '' ]);$('#autoRe').prop('checked', false);$('#autoEpgs').prop('checked', false);{{end}}"><span aria-hidden="true">&times;</span></button>
 												<h4 class="modal-title">分组编辑</h4>
 											</div>
 											<form method="post" action="/admin/channels">
@@ -278,7 +278,7 @@
 												</div>
 												<div class="modal-footer">
 													<button type="button" onclick="submitFormPOST(this)" class="btn btn-primary" name="saveCa">确定</button>
-													<button type="button" class="btn btn-default" onclick="$('#caId').val('');$('#caname').val('');$('#autoRe').val('');$('#ku9').val('');$('#rename').prop('checked', true);$('#caproxy').prop('checked', false);ruleEpgsXm.setValue([ '' ]);$('#autoRe').prop('checked', false);$('#autoEpgs').prop('checked', false);" data-dismiss="modal">关闭</button>
+													<button type="button" class="btn btn-default" onclick="$('#caId').val('');$('#caname').val('');$('#autoRe').val('');$('#ku9').val('');$('#rename').prop('checked', true);$('#caproxy').prop('checked', false);{{ if .ShowAuto }}ruleEpgsXm.setValue([ '' ]);$('#autoRe').prop('checked', false);$('#autoEpgs').prop('checked', false);{{end}}" data-dismiss="modal">关闭</button>
 												</div>
 											</form>
 										</div>

@@ -614,23 +614,30 @@ function getCategory(btn) {
 		$("#autoType").val(ctype);
 		if (ctype === "autoRe" || ctype === "auto") {
 			$("#rulesRe").val(crules);
-			ruleEpgsXm.setValue([ '' ]);
+			if (typeof ruleEpgsXm !== 'undefined' && ruleEpgsXm) {
+				ruleEpgsXm.setValue(['']);
+			}
 		    $("#autoRe").prop("checked", ctype === "autoRe" || ctype === "auto");
 			toggleSingleCheck(document.getElementById('autoRe'), 'autoEpgs', 'autoRe');
 		}else{
 			$("#rulesRe").val('');
 			var epgarray = (crules === "" || crules == null) ? [] : String(crules).split(',');
-			ruleEpgsXm.setValue(epgarray);
+			if (typeof ruleEpgsXm !== 'undefined' && ruleEpgsXm) {
+					ruleEpgsXm.setValue(epgarray);
+				}
 			$("#autoEpgs").prop("checked", ctype === "autoEpgs");
 			toggleSingleCheck(document.getElementById('autoEpgs'), 'autoRe', 'autoEpgs');
 		}
 	}else{
 		$("#autoType").val('');
 		$("#rulesRe").val('');
-		ruleEpgsXm.setValue([ '' ]);
 		$("#autoRe").prop("checked", false);
 		$("#autoEpgs").prop("checked", false);
-		toggleSingleCheck(null, null, null);
+		
+		if (typeof ruleEpgsXm !== 'undefined' && ruleEpgsXm) {
+			ruleEpgsXm.setValue(['']);
+			toggleSingleCheck(null, null, null);
+		}
 	}
 	
 	$("#caproxy").prop("checked", cproxy === 1);
