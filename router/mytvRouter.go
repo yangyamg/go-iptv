@@ -11,5 +11,6 @@ func MytvRouter(r *gin.Engine, path string) {
 	{
 		router.GET("/m3u8", api.MytvGetUserM3U8)
 		router.GET("/:deviceId/e.xml", api.MytvGetRssEpg)
+		router.GET("/releases", api.MytvReleases)
 	}
 }

@@ -42,7 +42,7 @@ func BuildAPK() bool {
 	iconFile := "/config/images/icon/icon.png"
 
 	clientSource := "/client"
-	outputDir := "/app/app"
+	outputDir := "/config/app"
 	os.RemoveAll(outputDir)
 
 	timeStamp := fmt.Sprintf("%d", time.Now().Unix())

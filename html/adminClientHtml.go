@@ -26,7 +26,7 @@ func Client(c *gin.Context) {
 		Tips:        cfg.Tips,
 		ApkUrl:      "/app/" + cfg.Build.Name + ".apk",
 		ApkName:     cfg.Build.Name + ".apk",
-		UpSize:      until.GetFileSize("./app/" + cfg.Build.Name + ".apk"),
+		UpSize:      until.GetFileSize("/config/app/" + cfg.Build.Name + ".apk"),
 		BuildStatus: bootstrap.GetBuildStatus(), // 获取APK编译状态
 	}
 

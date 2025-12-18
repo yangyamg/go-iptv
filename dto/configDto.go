@@ -7,6 +7,12 @@ type Build struct {
 	Version string `mapstructure:"version" json:"version" yaml:"version"`
 }
 
+type MyTV struct {
+	Name    string `mapstructure:"name" json:"name" yaml:"name"`
+	Version string `mapstructure:"version" json:"version" yaml:"version"`
+	Update  string `mapstructure:"update" json:"update" yaml:"update"`
+}
+
 type AppUpdate struct {
 	// Url  string `mapstructure:"url" json:"url" yaml:"url"`
 	Set  int64  `mapstructure:"set" json:"set" yaml:"set"`
@@ -95,6 +101,7 @@ type Config struct {
 	Epg         Epg           `mapstructure:"epg" json:"epg" yaml:"epg"`
 	Aggregation Aggregation   `mapstructure:"aggregation" json:"aggregation" yaml:"aggregation"`
 	System      System        `mapstructure:"system" json:"system" yaml:"system"`
+	MyTV        MyTV          `mapstructure:"mytv" json:"mytv" yaml:"mytv"`
 	// Weather   Weather   `mapstructure:"weather" json:"weather" yaml:"weather"`
 	// Cache     Cache     `mapstructure:"cache" json:"cache" yaml:"cache"`
 	// EPGErrors EPGErrors `mapstructure:"epg_errors" json:"epg_errors" yaml:"epg_errors"`

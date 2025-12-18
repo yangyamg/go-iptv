@@ -54,6 +54,10 @@ func MytvGetRssEpg(c *gin.Context) {
 	c.Data(200, "text/xml", xmlData)
 }
 
+func MytvReleases(c *gin.Context) {
+	c.JSON(200, service.MytvReleases())
+}
+
 func getQingh() string {
 	res := dto.XmlTV{
 		GeneratorName: "清和IPTV管理系统",

@@ -15,6 +15,7 @@ import (
 	"os"
 	"regexp"
 	"strings"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -48,9 +49,10 @@ func InitRouter(debug bool) *gin.Engine {
 		"Add":      func(a, b int64) int64 { return a + b },
 		"Sub":      func(a, b int64) int64 { return a - b },
 		"DisPay":   func() int64 { return dao.GetConfig().System.DisPay },
+		"IsLic":    func() bool { return (dao.Lic.Type == 1 && dao.Lic.Exp > time.Now().Unix()) || dao.Lic.Type == 2 },
 	})
 
-	r.Static("/app", "./app")
+	r.Static("/app", "/config/app")
 	r.Static("/images", "/config/images/bj")
 	r.Static("/icon", "/config/images/icon")
 	r.Static("/logo", "/config/logo")
@@ -233,6 +235,7 @@ func loadTemplates(r *gin.Engine) {
 			"Add":      func(a, b int64) int64 { return a + b },
 			"Sub":      func(a, b int64) int64 { return a - b },
 			"DisPay":   func() int64 { return dao.GetConfig().System.DisPay }, // 显示付费模块
+			"IsLic":    func() bool { return (dao.Lic.Type == 1 && dao.Lic.Exp > time.Now().Unix()) || dao.Lic.Type == 2 },
 		})
 		tmpl = template.Must(tmpl.ParseFS(assets.EmbeddedFS, "templates/*"))
 		staticFiles, _ := fs.Sub(assets.StaticFS, "static")

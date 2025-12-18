@@ -62,3 +62,13 @@ func CheckProxy(c *gin.Context) {
 	url := fmt.Sprintf("%s://%s:%d/status", cfg.Proxy.Scheme, cfg.Proxy.PAddr, cfg.Proxy.Port)
 	c.JSON(200, until.GetUrlData(url))
 }
+
+func LicenseLog(c *gin.Context) {
+	_, ok := until.GetAuthName(c)
+	if !ok {
+		c.JSON(200, dto.NewAdminRedirectDto())
+		return
+	}
+
+	c.JSON(200, until.ReadFile("/config/license.log"))
+}

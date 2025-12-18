@@ -80,6 +80,7 @@ func GetUrlData(url string, ua ...string) string {
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
+		log.Println(url, " 请求失败:", err)
 		return ""
 	}
 	defer resp.Body.Close()
@@ -212,20 +213,44 @@ func CheckJava() bool {
 		return false
 	}
 
-	// 解析输出结果
 	outputStr := string(output)
 	lines := strings.Split(outputStr, "\n")
 
-	// 输出 Java 版本信息
 	if len(lines) > 0 {
-		javaVersion := lines[0]
-		log.Println("Java版本:", javaVersion)
+		javaVersionLine := lines[0]
+		log.Println("Java版本信息:", javaVersionLine)
 
-		// 判断 Java 版本是否为 1.8
-		if strings.Contains(javaVersion, "1.8") {
+		// 解析版本号，例如 'java version "1.8.0_361"' 或 'openjdk version "17.0.7"'
+		var versionStr string
+		if strings.Contains(javaVersionLine, `"`) {
+			parts := strings.Split(javaVersionLine, `"`)
+			if len(parts) >= 2 {
+				versionStr = parts[1]
+			}
+		}
+
+		if versionStr == "" {
+			log.Println("无法解析Java版本")
+			return false
+		}
+
+		// 取主版本号和次版本号
+		versionParts := strings.Split(versionStr, ".")
+		major := 0
+		minor := 0
+		if len(versionParts) >= 2 {
+			major, _ = strconv.Atoi(versionParts[0])
+			minor, _ = strconv.Atoi(versionParts[1])
+		} else if len(versionParts) == 1 {
+			major, _ = strconv.Atoi(versionParts[0])
+			minor = 0
+		}
+
+		// Java 1.x 系列，1.8对应 major=1, minor=8；Java 9+ 直接是 major=9+
+		if major > 1 || (major == 1 && minor >= 8) {
 			return true
 		} else {
-			log.Println("Java版本不是 1.8")
+			log.Println("Java版本低于 1.8")
 			return false
 		}
 	} else {

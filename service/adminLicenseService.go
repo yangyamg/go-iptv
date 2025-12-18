@@ -211,7 +211,7 @@ func Register(params url.Values) dto.ReturnJsonDto {
 		Pwd2: pwd2,
 	}})
 	if err != nil {
-		return dto.ReturnJsonDto{Code: 0, Msg: "连接服务器失败:" + err.Error(), Type: "danger"}
+		return dto.ReturnJsonDto{Code: 0, Msg: "连接引擎失败:" + err.Error(), Type: "danger"}
 	} else if res.Code != 1 {
 		return dto.ReturnJsonDto{Code: 0, Msg: res.Msg, Type: "danger"}
 	}
@@ -232,13 +232,13 @@ func Login(params url.Values) dto.ReturnJsonDto {
 		Pwd:  pwd,
 	}})
 	if err != nil {
-		return dto.ReturnJsonDto{Code: 0, Msg: "连接服务器失败:" + err.Error(), Type: "danger"}
+		return dto.ReturnJsonDto{Code: 0, Msg: "连接引擎失败:" + err.Error(), Type: "danger"}
 	} else if res.Code != 1 {
 		return dto.ReturnJsonDto{Code: 0, Msg: res.Msg, Type: "danger"}
 	} else {
 		if err := json.Unmarshal(res.Data, &dao.Lic); err != nil {
-			log.Println("⚠️ 无法解析服务器返回的key:", err)
-			return dto.ReturnJsonDto{Code: 0, Msg: "连接服务器失败:" + err.Error(), Type: "danger"}
+			log.Println("⚠️ 无法解析引擎返回的key:", err)
+			return dto.ReturnJsonDto{Code: 0, Msg: "连接引擎失败:" + err.Error(), Type: "danger"}
 		}
 	}
 
@@ -248,13 +248,13 @@ func Login(params url.Values) dto.ReturnJsonDto {
 func Logout() dto.ReturnJsonDto {
 	res, err := dao.WS.SendWS(dao.Request{Action: "logout"})
 	if err != nil {
-		return dto.ReturnJsonDto{Code: 0, Msg: "连接服务器失败", Type: "danger"}
+		return dto.ReturnJsonDto{Code: 0, Msg: "连接引擎失败", Type: "danger"}
 	} else if res.Code != 1 {
 		return dto.ReturnJsonDto{Code: 0, Msg: res.Msg, Type: "danger"}
 	} else {
 		if err := json.Unmarshal(res.Data, &dao.Lic); err != nil {
-			log.Println("⚠️ 无法解析服务器返回的key:", err)
-			return dto.ReturnJsonDto{Code: 0, Msg: "连接服务器失败", Type: "danger"}
+			log.Println("⚠️ 无法解析引擎返回的key:", err)
+			return dto.ReturnJsonDto{Code: 0, Msg: "连接引擎失败", Type: "danger"}
 		}
 	}
 	return dto.ReturnJsonDto{Code: 1, Msg: "退出成功", Type: "success"}

@@ -96,7 +96,10 @@
 
             <div class="col-lg-6">
                 <div class="card">
-                    <div class="card-header"><h4>引擎状态</h4>
+                    <div class="card-header"><h4>引擎状态&nbsp;&nbsp;<button class="btn btn-info btn-xs" 
+                            type="button" onclick="getLicLog()" data-toggle="modal" data-target="#showLicLog">
+                            查看日志
+                        </button></h4>
                         <button class="btn btn-info" onclick="resEng()"
                             style="position: absolute; top: 10px; right: 25px; margin: 0;">
                             重启引擎
@@ -106,6 +109,20 @@
                         <p>引擎状态：{{ if eq .Status 1 }}<font color="#33a996">运行中</font>{{else}}<font color="red">已下线</font>{{ end }}</p>
                         <p>连接状态：{{ if eq .Online 1 }}<font color="#33a996">已连接</font>{{else}}<font color="red">已下线</font>{{ end }}</p>
                         <p>引擎版本：{{ .Version }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<label class="btn btn-info btn-xs" style="margin:0;" onclick="updatalic()">检测更新</label></p>
+                    </div>
+                </div>
+                <div class="modal fade" id="showLicLog" tabindex="-1" role="dialog">
+                    <div class="modal-dialog modal-lg" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="$('#liclog').val('');"><span aria-hidden="true">&times;</span></button>
+                                <h4 class="modal-title">注册</h4>
+                            </div>
+                            <textarea class="form-control" rows="20" id="liclog" placeholder="引擎日志"></textarea>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal" onclick="$('#liclog').val('');">关闭</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
 			</div>
@@ -153,7 +170,9 @@
                                             <input type="checkbox" name="proxy" onchange="submitFormPOST(this)" {{if eq .Proxy 1}}checked{{end}}/>
                                             <span></span>
                                         </label>
+                                        {{if eq .Proxy 1}}
                                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<label class="btn btn-info btn-xs"  style="margin:0;" onclick="checkProxy()">可用性检测</label>
+                                        {{end}}
                                     </div>
                                 </div>
                                 </form>

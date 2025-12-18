@@ -40,7 +40,7 @@ func main() {
 	}
 
 	if !until.CheckJava() {
-		log.Println("请安装Java JDK 1.8环境")
+		log.Println("请安装大于Java JDK 1.8环境")
 		return
 	}
 

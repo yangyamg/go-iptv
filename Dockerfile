@@ -30,45 +30,59 @@ RUN chmod +x iptv license start
 # ================================
 # Final Image
 # ================================
-FROM alpine:3.22
+FROM eclipse-temurin:17-jre-alpine
 
 ENV TZ=Asia/Shanghai
+ENV ANDROID_HOME=/opt/android-sdk
+ENV ANDROID_SDK_ROOT=/opt/android-sdk
+ENV PATH=$PATH:/opt/android-sdk/build-tools
+
+
 WORKDIR /app
 VOLUME /config
 EXPOSE 80 8080
 
-# 安装依赖，减少层
+# 基础依赖
 RUN apk add --no-cache \
-      openjdk8 \
-      bash \
-      curl \
-      tzdata \
-      sqlite \
-      ffmpeg \
+    bash \
+    curl \
+    wget \
+    unzip \
+    zip \
+    ffmpeg \
+    sqlite \
+    libwebp-tools \
+    libc6-compat \
+    libstdc++ \
+    tzdata \
     && cp /usr/share/zoneinfo/${TZ} /etc/localtime \
-    && echo ${TZ} > /etc/timezone
+    && echo ${TZ} > /etc/timezone \
+    && rm -rf /var/lib/apt/lists/*
 
-# 静态资源（不常改变）尽早 COPY，这样缓存会利用到
+# Android build-tools（apksigner / zipalign）
+RUN mkdir -p ${ANDROID_HOME}/build-tools \
+ && curl -L -o /tmp/build-tools.zip \
+    https://dl.google.com/android/repository/build-tools_r33.0.2-linux.zip \
+ && unzip /tmp/build-tools.zip -d  /tmp/build-tools \
+ && mv /tmp/build-tools/android-13/* \
+       ${ANDROID_HOME}/build-tools \
+ && rm -rf /tmp/build-tools*
+
+# apktool
+COPY apktool/apktool /usr/bin/apktool
+COPY apktool/apktool.jar /usr/bin/apktool.jar
+RUN chmod +x /usr/bin/apktool*
+
+# 应用资源
 COPY client /client
-COPY apktool/ /usr/bin/
-COPY static/ /app/static
-COPY config.yml /app/config.yml
-COPY README.md  /app/README.md
-COPY logo/ /app/logo
-COPY dictionary.txt /app/dictionary.txt
+COPY static /app/static
+COPY database /app/database
+COPY logo /app/logo
 
-RUN chmod -R 777 /usr/bin/apktool*
-
-# 其他不常改变的文件
-COPY database/ /app/database
-COPY alias.json /app/alias.json
-COPY ChangeLog.md /app/ChangeLog.md
-COPY Version /app/Version
+COPY config.yml README.md dictionary.txt alias.json ChangeLog.md Version license start MyTV.apk /app/
 COPY license_all/Version_lic /app/Version_lic
 
-# 最后 COPY 程序部分（经常更新）
-COPY --from=builder /app/iptv .
-COPY --from=builder /app/license .
-COPY --from=builder /app/start .
+# Go 程序
+COPY --from=builder /app/iptv /app/iptv
 
 CMD ["./start"]

@@ -45,6 +45,10 @@ func AdminRouter(r *gin.Engine, path string) {
 			router.GET("/notice", html.Notice)
 			router.POST("/notice", api.Notice)
 
+			router.GET("/clientMyTV", html.ClientMyTV)
+			router.POST("/clientMyTV", api.ClientMyTV)
+			router.GET("/clientMyTV/buildStatus", api.BuildMyTVStatus)
+
 			router.GET("/client", html.Client)
 			router.POST("/client", api.Client)
 			router.GET("/client/buildStatus", api.BuildStatus)
@@ -62,6 +66,7 @@ func AdminRouter(r *gin.Engine, path string) {
 			router.GET("/license", html.License)
 			router.GET("/license/checkProxy", api.CheckProxy)
 			router.POST("/license", api.License)
+			router.GET("/license/log", api.LicenseLog)
 
 			router.GET("/updata", html.Updata)
 			router.GET("/updata/checkWeb", api.UpdataCheckWeb)

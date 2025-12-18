@@ -1243,6 +1243,81 @@ function toggleLock(btn) {
     }
 }
 
+function BuildMyTVApk(btn) {
+var form = btn.closest("form");
+	if (!form) {
+		lightyear.notify("表单提交失败", "danger", 3000);
+		return;
+	}
+	var action = form.action || window.location.pathname; 
+	const params = new URLSearchParams();
+	new FormData(form).forEach((value, key) => {
+		params.append(key, value);
+	});
+	params.append(btn.name, "");
+	if (!params.has("push")) {
+		params.append("push", 0);
+	}
+	fetch(action, {
+		method: "POST",
+		headers: {
+			"Content-Type": "application/x-www-form-urlencoded"
+		},
+		body: params.toString()
+	})
+	.then(async response => {
+		const text = await response.text(); 
+		if (text.includes('/admin/login')) {
+			window.location.href = "/admin/login";
+			throw text;
+		}
+		return JSON.parse(text); 
+	})
+	.then(data => {
+		lightyear.notify(data.msg, data.type, 3000);
+		if (data.type === "success") {
+			$('#buildMyTV').prop('disabled', true);
+			$('.download-link').prop('disabled', true);
+			getBuildMyTVStatus()
+		}
+	})
+	.catch(err => {
+		lightyear.notify("提交失败:"+ err, "danger", 3000);
+	});
+}
+
+function getBuildMyTVStatus() {
+    var timer = null;
+    var requesting = false; // 是否正在请求
+
+    timer = setInterval(function () {
+        if (requesting) return; // 上一次还没结束，直接跳过
+
+        requesting = true;
+
+        $.getJSON('/admin/clientMyTV/buildStatus', function (resp) {
+            $('#apksize').val(resp.data.size);
+
+            if (resp.code === 1) {
+                lightyear.notify(resp.msg, resp.type, 1000);
+                $('.download-link').each(function () {
+                    $(this).attr('href', resp.data.url);
+                    $(this).attr('download', resp.data.name);
+                });
+                $('#app_version').val(resp.data.version);
+                $('#buildMyTV').prop('disabled', false);
+                $('.download-link').prop('disabled', false);
+                clearInterval(timer);
+            }
+        }).fail(function () {
+            lightyear.notify("请求失败，稍后重试...", 'danger', 1000);
+        }).always(function () {
+            requesting = false; // 请求结束，允许下一次
+        });
+
+    }, 1000);
+}
+
 function caMoveup() {
 	const tbody = document.getElementById("categorylist_tbody");
     if (!tbody) return;
@@ -1558,6 +1633,16 @@ function checkProxy(){
 				lightyear.loading('hide');
 				lightyear.notify("中转服务访问异常,请检查配置", "danger", 3000);
 			}
+		}
+	});
+}
+
+function getLicLog(){
+	$.ajax({
+		url: "/admin/license/log",
+		type: "GET", 
+		success: function (data) {
+			$("#liclog").val(data);
 		}
 	});
 }
