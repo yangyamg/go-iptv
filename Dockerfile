@@ -45,7 +45,9 @@ EXPOSE 80 8080
 # 应用资源
 COPY apktool/apktool apktool/apktool.jar /usr/bin/
 COPY client /client
-COPY static database logo /app/
+COPY static /app/static
+COPY database /app/database
+COPY logo /app/logo
 
 # 基础依赖
 RUN apk add --no-cache \
