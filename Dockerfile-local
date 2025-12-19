@@ -11,7 +11,7 @@ COPY . .
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
     go build -ldflags "-s -w" -o iptv main.go
 
-RUN chmod +x iptv license start apktool/apktool*
+RUN chmod +x iptv license_all/license_amd64 start apktool/apktool*
 
 
 # ---------- Runtime ----------
@@ -58,7 +58,7 @@ RUN apk add --no-cache \
         ${ANDROID_HOME}/build-tools \
     && rm -rf /tmp/build-tools*
 
-COPY config.yml README.md dictionary.txt alias.json ChangeLog.md Version license start MyTV.apk keystore.p12 /app/
+COPY config.yml README.md dictionary.txt alias.json ChangeLog.md Version license_all/license_amd64 start MyTV.apk keystore.p12 /app/
 COPY license_all/Version_lic /app/Version_lic
 
 # Go 程序
