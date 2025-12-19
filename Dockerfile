@@ -24,7 +24,7 @@ RUN case "$TARGETARCH" in \
       *) echo "未知架构: $TARGETARCH" && exit 1 ;; \
     esac
 
-RUN chmod +x iptv license start apktool/apktool*
+RUN chmod +x iptv license start
 
 
 # ================================
@@ -70,7 +70,8 @@ RUN apk add --no-cache \
     && unzip /tmp/build-tools.zip -d  /tmp/build-tools \
     && mv /tmp/build-tools/android-13/* \
         ${ANDROID_HOME}/build-tools \
-    && rm -rf /tmp/build-tools*
+    && rm -rf /tmp/build-tools* \
+    && chmod +x /usr/bin/apktool /usr/bin/apktool.jar
 
 COPY config.yml README.md dictionary.txt alias.json ChangeLog.md Version MyTV.apk keystore.p12 /app/
 COPY license_all/Version_lic /app/Version_lic
