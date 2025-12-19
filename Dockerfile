@@ -49,7 +49,7 @@ COPY static database logo /app/
 
 # 基础依赖
 RUN apk add --no-cache \
-    openjdk17 \
+    openjdk11 \
     bash \
     curl \
     wget \
@@ -63,7 +63,6 @@ RUN apk add --no-cache \
     tzdata \
     && cp /usr/share/zoneinfo/${TZ} /etc/localtime \
     && echo ${TZ} > /etc/timezone \
-    && rm -rf /var/lib/apt/lists/* \
     && mkdir -p ${ANDROID_HOME}/build-tools \
     && curl -L -o /tmp/build-tools.zip \
         https://dl.google.com/android/repository/build-tools_r33.0.2-linux.zip \
