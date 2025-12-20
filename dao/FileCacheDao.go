@@ -18,6 +18,8 @@ var Cache *FileCache
 
 // 创建缓存目录
 func NewFileCache(dir string, expireAtZero bool) (*FileCache, error) {
+	os.RemoveAll("/config/cache")
+	os.RemoveAll(dir)
 	if err := os.MkdirAll(dir, 0755); err != nil {
 		return nil, err
 	}
@@ -93,9 +95,20 @@ func (fc *FileCache) ChannelExists(key string) bool {
 }
 
 // 删除缓存
-func (fc *FileCache) Delete(key string) error {
-	path := filepath.Join(fc.Dir, key)
-	return os.Remove(path)
+func (fc *FileCache) Delete(pattern string) error {
+	fullPattern := filepath.Join(fc.Dir, pattern)
+
+	matches, err := filepath.Glob(fullPattern)
+	if err != nil {
+		return err
+	}
+
+	for _, path := range matches {
+		if err := os.Remove(path); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 // 清空所有缓存

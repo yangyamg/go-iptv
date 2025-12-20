@@ -151,11 +151,7 @@ func InitCacheRebuild() {
 }
 
 func CleanMealsXmlCacheAll() {
-	var meals []models.IptvMeals
-	dao.DB.Model(&models.IptvMeals{}).Find(&meals)
-	for _, meal := range meals {
-		dao.Cache.Delete("rssEpgXml_" + strconv.FormatInt(meal.ID, 10))
-	}
+	dao.Cache.Delete("rssEpgXml_*")
 	Cache.Rebuild()
 }
 
@@ -179,12 +175,8 @@ func CleanMealsXmlCacheOne(id int64) {
 }
 
 func CleanMealsCacheAll() {
-	var meals []models.IptvMeals
-	dao.DB.Model(&models.IptvMeals{}).Find(&meals)
-	for _, meal := range meals {
-		dao.Cache.Delete("rssMealTxt_" + strconv.FormatInt(meal.ID, 10))
-		dao.Cache.Delete("rssMealM3u8_" + strconv.FormatInt(meal.ID, 10))
-	}
+	dao.Cache.Delete("rssMeal*")
+	dao.Cache.Delete("mytvMeal*")
 
 	CleanMealsXmlCacheAll()
 }
@@ -193,16 +185,11 @@ func CleanMealsCacheOne(id int64) {
 	log.Println("删除套餐订阅缓存: ", id)
 	dao.Cache.Delete("rssMealTxt_" + strconv.FormatInt(id, 10))
 	dao.Cache.Delete("rssMealM3u8_" + strconv.FormatInt(id, 10))
+	dao.Cache.Delete("mytvMeal*")
 	CleanMealsXmlCacheOne(id)
 }
 
 func CleanAutoCacheAll() {
-	var ca []models.IptvCategory
-	dao.DB.Model(&models.IptvCategory{}).Where("enable = 1 and type like ?", "auto%").Find(&ca)
-	for _, ca := range ca {
-		log.Println("删除自动聚合缓存: ", ca.Name)
-		dao.Cache.Delete("autoCategory_" + strconv.FormatInt(ca.ID, 10))
-		dao.Cache.Delete("autoCategory_" + strconv.FormatInt(ca.ID, 10) + "_show")
-	}
+	dao.Cache.Delete("autoCategory_*")
 	CleanMealsCacheAll()
 }

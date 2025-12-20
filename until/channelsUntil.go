@@ -729,9 +729,9 @@ func GetM3u8(id int64, host, token string) string {
 	return builder.String()
 }
 
-func MytvM3u8(id int64, host string) string {
+func MytvM3u8(id int64, deviceId, host string) string {
 
-	m3u8CaCheKey := "mytvMealM3u8_" + strconv.FormatInt(id, 10)
+	m3u8CaCheKey := "mytvMealM3u8_" + deviceId
 	if dao.Cache.Exists(m3u8CaCheKey) {
 		cacheData, err := dao.Cache.GetNotExpired(m3u8CaCheKey)
 		if err == nil {
@@ -739,7 +739,7 @@ func MytvM3u8(id int64, host string) string {
 		}
 	}
 
-	epgURL := host + "/mytv/" + strconv.FormatInt(id, 10) + "/e.xml"
+	epgURL := host + "/mytv/" + deviceId + "/e.xml"
 	logoBase := host + "/logo/"
 
 	var builder strings.Builder

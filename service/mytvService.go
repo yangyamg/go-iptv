@@ -24,7 +24,7 @@ func MytvGetUserM3U8(ts, deviceId, clientIP, host string) string {
 	user = SaveUser(user)
 	keySeed := ts + deviceId
 
-	data, err := until.AESEncrypt(until.MytvM3u8(int64(user.Meal), host), keySeed)
+	data, err := until.AESEncrypt(until.MytvM3u8(int64(user.Meal), deviceId, host), keySeed)
 	if err != nil {
 		log.Println("mytv订阅加密失败: ", err)
 	}

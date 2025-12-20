@@ -55,7 +55,7 @@ func main() {
 	}
 
 	log.Println("初始化EPG缓存...")
-	cache, err := dao.NewFileCache("/config/cache/", true)
+	cache, err := dao.NewFileCache("/tmp/cache/", true)
 	if err != nil {
 		log.Println("初始化缓存失败:", err)
 		return
