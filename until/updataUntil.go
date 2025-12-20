@@ -143,7 +143,7 @@ func CheckNewVerWeb(local string) (bool, string, error) {
 	latest, err := fetchLatestStableRelease("wz1st", "go-iptv")
 	if err != nil {
 		log.Println("连接Github 检查失败，请检查网络连接")
-		return false, "", err
+		return false, "", errors.New("连接Github 检查失败，请检查网络连接")
 	}
 
 	isNew, err := isNewer(latest.TagName, local, 4)
@@ -155,7 +155,7 @@ func CheckNewVerLic(local string) (bool, string, error) {
 	latest, err := fetchLatestStableRelease("wz1st", "iptv-license-down")
 	if err != nil {
 		log.Println("连接Github 检查失败，请检查网络连接")
-		return false, "", err
+		return false, "", errors.New("连接Github 检查失败，请检查网络连接")
 	}
 
 	isNew, err := isNewer(latest.TagName, local, 3)
