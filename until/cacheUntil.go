@@ -177,7 +177,12 @@ func CleanMealsXmlCacheOne(id int64) {
 func CleanMealsCacheAll() {
 	dao.Cache.Delete("rssMeal*")
 	dao.Cache.Delete("mytvMeal*")
+}
 
+func CleanMealsCacheAllRebuild() {
+	dao.Cache.Delete("rssMeal*")
+	dao.Cache.Delete("mytvMeal*")
+	dao.Cache.Delete("rssEpgXml_*")
 	CleanMealsXmlCacheAll()
 }
 
@@ -186,10 +191,23 @@ func CleanMealsCacheOne(id int64) {
 	dao.Cache.Delete("rssMealTxt_" + strconv.FormatInt(id, 10))
 	dao.Cache.Delete("rssMealM3u8_" + strconv.FormatInt(id, 10))
 	dao.Cache.Delete("mytvMeal*")
-	CleanMealsXmlCacheOne(id)
 }
 
 func CleanAutoCacheAll() {
 	dao.Cache.Delete("autoCategory_*")
 	CleanMealsCacheAll()
+}
+
+func CleanAutoCacheAllRebuild() {
+	dao.Cache.Delete("autoCategory_*")
+	CleanMealsCacheAll()
+	CleanMealsXmlCacheAll()
+}
+
+func CleanMealsCacheRebuildOne(id int64) {
+	log.Println("删除套餐订阅缓存: ", id)
+	dao.Cache.Delete("rssMealTxt_" + strconv.FormatInt(id, 10))
+	dao.Cache.Delete("rssMealM3u8_" + strconv.FormatInt(id, 10))
+	dao.Cache.Delete("mytvMeal*")
+	CleanMealsXmlCacheOne(id)
 }

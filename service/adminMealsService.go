@@ -92,10 +92,14 @@ func MealsDel(params url.Values) dto.ReturnJsonDto {
 	if mealId == "1000" {
 		return dto.ReturnJsonDto{Code: 0, Msg: "默认套餐无法删除", Type: "danger"}
 	}
+	mealIdInt64, err := strconv.ParseInt(mealId, 10, 64)
+	if err != nil {
+		return dto.ReturnJsonDto{Code: 0, Msg: "套餐ID 错误", Type: "danger"}
+	}
 	if err := dao.DB.Where("id = ?", mealId).Delete(&models.IptvMeals{}).Error; err != nil {
 		return dto.ReturnJsonDto{Code: 0, Msg: "删除失败", Type: "danger"}
 	}
-	go until.CleanMealsCacheAll()
+	go until.CleanMealsXmlCacheOne(mealIdInt64)
 	return dto.ReturnJsonDto{Code: 1, Msg: "删除成功", Type: "success"}
 }
 
@@ -122,7 +126,7 @@ func MealsSubmit(params url.Values) dto.ReturnJsonDto {
 		if err := dao.DB.Create(&iptvMeals).Error; err != nil {
 			return dto.ReturnJsonDto{Code: 0, Msg: "添加失败", Type: "danger"}
 		}
-		go until.CleanMealsCacheOne(iptvMeals.ID)
+		go until.CleanMealsCacheRebuildOne(iptvMeals.ID)
 		return dto.ReturnJsonDto{Code: 1, Msg: "添加成功", Type: "success"}
 	} else {
 		mealIdInt64, err := strconv.ParseInt(mealId, 10, 64)
@@ -144,7 +148,7 @@ func MealsSubmit(params url.Values) dto.ReturnJsonDto {
 		if err := dao.DB.Save(&iptvMeals).Error; err != nil {
 			return dto.ReturnJsonDto{Code: 0, Msg: "编辑失败", Type: "danger"}
 		}
-		go until.CleanMealsCacheOne(iptvMeals.ID)
+		go until.CleanMealsCacheRebuildOne(iptvMeals.ID)
 		return dto.ReturnJsonDto{Code: 1, Msg: "编辑成功", Type: "success"}
 	}
 

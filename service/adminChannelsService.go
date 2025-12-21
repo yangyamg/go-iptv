@@ -368,7 +368,7 @@ func DelList(params url.Values) dto.ReturnJsonDto {
 	}
 	dao.DB.Where("list_id = ?", iptvCategoryList.ID).Delete(&models.IptvCategory{})
 	dao.DB.Where("list_id = ?", iptvCategoryList.ID).Delete(&models.IptvChannel{})
-	go until.CleanMealsCacheAll() // 删除缓存
+	go until.CleanMealsCacheAllRebuild() // 删除缓存
 	return dto.ReturnJsonDto{Code: 1, Msg: fmt.Sprintf("删除列表 %s 成功\n", iptvCategoryList.Name), Type: "success"}
 }
 
@@ -386,7 +386,7 @@ func DelCa(params url.Values) dto.ReturnJsonDto {
 	dao.DB.Model(&models.IptvCategory{}).Where("id = ?", category.ID).Delete(&models.IptvCategory{})
 	dao.DB.Model(&models.IptvChannel{}).Where("c_id = ?", category.ID).Delete(&models.IptvChannel{})
 	go until.RemoveCaFromEpg(category.ID)
-	go until.CleanAutoCacheAll()
+	go until.CleanAutoCacheAllRebuild()
 	return dto.ReturnJsonDto{Code: 1, Msg: fmt.Sprintf("删除频道 %s 成功\n", category.Name), Type: "success"}
 }
 
@@ -590,7 +590,7 @@ func SaveChannelsOne(params url.Values) dto.ReturnJsonDto {
 		return dto.ReturnJsonDto{Code: 0, Msg: "保存频道失败" + err.Error(), Type: "danger"}
 	}
 
-	go until.CleanAutoCacheAll() // 清理缓存
+	go until.CleanAutoCacheAllRebuild() // 清理缓存
 	return dto.ReturnJsonDto{Code: 1, Msg: "保存成功", Type: "success"}
 }
 
@@ -669,7 +669,7 @@ func CategoryListChangeStatus(params url.Values) dto.ReturnJsonDto {
 		dao.DB.Model(&models.IptvCategoryList{}).Where("id = ?", cateData.ID).Update("enable", 1)
 		dao.DB.Model(&models.IptvCategory{}).Where("list_id = ?", cateData.ID).Update("enable", 1)
 	}
-	go until.CleanAutoCacheAll()
+	go until.CleanAutoCacheAllRebuild()
 	return dto.ReturnJsonDto{Code: 1, Msg: "源 " + cateData.Name + "状态修改成功", Type: "success"}
 }
 
@@ -691,7 +691,7 @@ func CategoryChangeStatus(params url.Values) dto.ReturnJsonDto {
 		dao.DB.Model(&models.IptvCategory{}).Where("id = ?", cateData.ID).Update("enable", 1)
 		dao.DB.Model(&models.IptvChannel{}).Where("c_id = ?", cateData.ID).Update("status", 1)
 	}
-	go until.CleanAutoCacheAll()
+	go until.CleanAutoCacheAllRebuild()
 	return dto.ReturnJsonDto{Code: 1, Msg: "分类 " + cateData.Name + "状态修改成功", Type: "success"}
 }
 
@@ -711,7 +711,7 @@ func ChannelsChangeStatus(params url.Values) dto.ReturnJsonDto {
 	} else {
 		dao.DB.Model(&models.IptvChannel{}).Where("id = ?", chData.ID).Update("status", 1)
 	}
-	go until.CleanAutoCacheAll()
+	go until.CleanAutoCacheAllRebuild()
 	return dto.ReturnJsonDto{Code: 1, Msg: "频道 " + chData.Name + "状态修改成功", Type: "success"}
 }
 
@@ -830,10 +830,9 @@ func SaveCategory(params url.Values) dto.ReturnJsonDto {
 		}
 		dao.DB.Model(&models.IptvCategory{}).Create(&new)
 		if strings.Contains(new.Type, "auto") {
-			go until.CleanAutoCacheAll()
+			go until.CleanAutoCacheAllRebuild()
 		} else {
 			go until.SyncCaToEpg(new.ID)
-			go until.CleanMealsCacheAll()
 		}
 	} else {
 		caIdInt, err := strconv.ParseInt(caId, 10, 64)
