@@ -75,7 +75,7 @@ RUN apk add --no-cache \
     && ln -s ${ANDROID_HOME}/build-tools/zipalign /usr/local/bin/zipalign \
     && chmod +x /usr/bin/apktool /usr/bin/apktool.jar
 
-COPY config.yml README.md dictionary.txt alias.json ChangeLog.md Version MyTV.apk keystore.p12 /app/
+COPY config.yml README.md dictionary.txt alias.json ChangeLog.md Version keystore.p12 /app/
 COPY license_all/Version_lic /app/Version_lic
 
 # Go 程序

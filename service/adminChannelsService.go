@@ -846,7 +846,6 @@ func SaveCategory(params url.Values) dto.ReturnJsonDto {
 		ca.Name = caname
 		ca.UA = caua
 		ca.Ku9 = ku9
-		ca.Type = "user"
 		ca.Rules = ""
 
 		if proxy == "1" || proxy == "true" || proxy == "on" {
