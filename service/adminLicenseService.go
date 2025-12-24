@@ -219,6 +219,33 @@ func Register(params url.Values) dto.ReturnJsonDto {
 	return dto.ReturnJsonDto{Code: 1, Msg: res.Msg, Type: "success"}
 }
 
+func ChangePwd(params url.Values) dto.ReturnJsonDto {
+	opwd := params.Get("opwd")
+	pwd := params.Get("pwd")
+	pwd2 := params.Get("pwd2")
+
+	if opwd == "" || pwd == "" || pwd2 == "" {
+		return dto.ReturnJsonDto{Code: 0, Msg: "不能为空", Type: "danger"}
+	}
+
+	if pwd != pwd2 {
+		return dto.ReturnJsonDto{Code: 0, Msg: "两次输入的密码不一致", Type: "danger"}
+	}
+
+	res, err := dao.WS.SendWS(dao.Request{Action: "changepwd", Data: dto.LoginDto{
+		OPwd: opwd,
+		Pwd:  pwd,
+		Pwd2: pwd2,
+	}})
+	if err != nil {
+		return dto.ReturnJsonDto{Code: 0, Msg: "连接引擎失败:" + err.Error(), Type: "danger"}
+	} else if res.Code != 1 {
+		return dto.ReturnJsonDto{Code: 0, Msg: res.Msg, Type: "danger"}
+	}
+
+	return Logout()
+}
+
 func Login(params url.Values) dto.ReturnJsonDto {
 	name := params.Get("name")
 	pwd := params.Get("pwd")
@@ -242,7 +269,31 @@ func Login(params url.Values) dto.ReturnJsonDto {
 		}
 	}
 
-	return dto.ReturnJsonDto{Code: 1, Msg: "登录成功", Type: "success"}
+	return dto.ReturnJsonDto{Code: 5, Msg: "登录成功", Type: "success"}
+}
+
+func Reset(params url.Values) dto.ReturnJsonDto {
+	name := params.Get("name")
+
+	if name == "" {
+		return dto.ReturnJsonDto{Code: 0, Msg: "用户名不能为空", Type: "danger"}
+	}
+
+	emailSimple := regexp.MustCompile(`^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$`)
+	if !emailSimple.MatchString(name) {
+		return dto.ReturnJsonDto{Code: 0, Msg: "邮箱格式不正确", Type: "danger"}
+	}
+
+	res, err := dao.WS.SendWS(dao.Request{Action: "resetPwd", Data: dto.LoginDto{
+		Name: name,
+	}})
+	if err != nil {
+		return dto.ReturnJsonDto{Code: 0, Msg: "连接引擎失败:" + err.Error(), Type: "danger"}
+	} else if res.Code != 1 {
+		return dto.ReturnJsonDto{Code: 0, Msg: res.Msg, Type: "danger"}
+	}
+
+	return dto.ReturnJsonDto{Code: 1, Msg: res.Msg, Type: "success"}
 }
 
 func Logout() dto.ReturnJsonDto {
@@ -257,7 +308,7 @@ func Logout() dto.ReturnJsonDto {
 			return dto.ReturnJsonDto{Code: 0, Msg: "连接引擎失败", Type: "danger"}
 		}
 	}
-	return dto.ReturnJsonDto{Code: 1, Msg: "退出成功", Type: "success"}
+	return dto.ReturnJsonDto{Code: 5, Msg: "退出成功", Type: "success"}
 }
 
 func Dispay(params url.Values) dto.ReturnJsonDto {

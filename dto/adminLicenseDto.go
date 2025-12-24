@@ -31,6 +31,7 @@ type Lic struct {
 
 type LoginDto struct {
 	Name string `json:"name"`
+	OPwd string `json:"opwd"`
 	Pwd  string `json:"pwd"`
 	Pwd2 string `json:"pwd2"`
 }

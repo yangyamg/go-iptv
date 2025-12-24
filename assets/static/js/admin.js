@@ -248,11 +248,8 @@ function tdBtnPOST(btn) {
 				if (tr) tr.remove();
 			}else if (btn.name.includes("Status")) {
 				const tr = btn.closest("tr");
-				console.log(tr);
 				const statusTd = tr.querySelector("td.status-show");
-				console.log(statusTd);
     			const font = statusTd.querySelector("font");
-				console.log(font);
 				if (font && font.textContent.includes("上线")) {
 					font.textContent = "下线";
 					font.color = "red";
@@ -274,6 +271,9 @@ function tdBtnPOST(btn) {
 				sub.modal('hide');
 				loadPage(action);
 			}
+		}else if (data.code === 5) {
+			lightyear.notify(data.msg, data.type, 3000);
+			location.reload();
 		}else {
 			lightyear.notify(data.msg, data.type, 3000);
 		}
@@ -387,7 +387,6 @@ function epgsGetChannel(btn) {
 	})
 	.then(async response => {
 		const text = await response.text(); 
-		console.log(text);
 		if (text.includes('/admin/login')) {
 			window.location.href = "/admin/login";
 			throw text;
@@ -395,9 +394,7 @@ function epgsGetChannel(btn) {
 		return JSON.parse(text); 
 	})
 	.then(res => {
-		console.log(res);
 		if (res.code === 1) {
-			console.log(res.data);
 			epgChSelect.update({data: res.data});
 		}else{
 			lightyear.notify(res.msg, res.type, 3000);
@@ -1037,7 +1034,6 @@ function uploadLogo(input) {
             }
         },
         error: function(err) {
-            console.error(err);
             lightyear.notify("上传失败", "danger", 3000);
         }
     });

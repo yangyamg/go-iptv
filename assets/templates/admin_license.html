@@ -11,6 +11,11 @@
                     <div style="position: absolute; top: 10px; right: 25px; margin: 0;">
                         {{ .Lic.Name }}&nbsp;&nbsp;
                         <button class="btn btn-info btn-xs" 
+                            type="button"
+                            data-toggle="modal" data-target="#changePwd">
+                            密码修改
+                        </button>&nbsp;
+                        <button class="btn btn-info btn-xs" 
                             type="button" onclick="tdBtnPOST(this)" name="logout">
                             退出
                         </button>
@@ -26,6 +31,11 @@
                             type="button"
                             data-toggle="modal" data-target="#login">
                             登录
+                        </button>&nbsp;
+                        <button class="btn btn-info btn-xs" 
+                            type="button"
+                            data-toggle="modal" data-target="#reset">
+                            密码重置
                         </button>
                     </div>  
                     {{end}}
@@ -92,6 +102,64 @@
                         </div>
                     </div>
                 </div>
+                <div class="modal fade" id="reset" tabindex="-1" role="dialog">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="$('#rename').val('');"><span aria-hidden="true">&times;</span></button>
+                                <h4 class="modal-title">密码重置</h4>
+                            </div>
+                            <form method="post" action="/admin/license">
+                                <div class="modal-body">
+                                    <div class="form-group has-feedback feedback-left">
+                                        <input type="text" placeholder="请输入邮箱" class="form-control" name="name" id="rename" />
+                                        <span class="mdi mdi-account form-control-feedback" aria-hidden="true"></span>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" onclick="submitFormPOST(this)" class="btn btn-primary" name="reset">确定</button>
+                                    <button type="button" class="btn btn-default" data-dismiss="modal" onclick="$('#rename').val('');">关闭</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                {{ if eq .Lic.Status 1 }}
+                <div class="modal fade" id="changePwd" tabindex="-1" role="dialog">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="$('#lickey').val('');"><span aria-hidden="true">&times;</span></button>
+                                <h4 class="modal-title">密码修改</h4>
+                            </div>
+                            <form method="post" action="/admin/license">
+                                <div class="modal-body">
+                                    <div class="form-group has-feedback feedback-left">
+                                        <input type="text" class="form-control" value="{{ .Lic.Name }}" disabled/>
+                                        <span class="mdi mdi-account form-control-feedback" aria-hidden="true"></span>
+                                    </div>
+                                    <div class="form-group has-feedback feedback-left">
+                                        <input type="password" placeholder="请输入原密码" class="form-control" id="opwd" name="opwd" />
+                                        <span class="mdi mdi-lock form-control-feedback" aria-hidden="true"></span>
+                                    </div>
+                                    <div class="form-group has-feedback feedback-left">
+                                        <input type="password" placeholder="请输入密码" class="form-control" id="npwd" name="pwd" />
+                                        <span class="mdi mdi-lock form-control-feedback" aria-hidden="true"></span>
+                                    </div>
+                                    <div class="form-group has-feedback feedback-left">
+                                        <input type="password" placeholder="确认密码" class="form-control" id="npwd2" name="pwd2" />
+                                        <span class="mdi mdi-lock form-control-feedback" aria-hidden="true"></span>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" onclick="submitFormPOST(this)" class="btn btn-primary" name="changePwd">确定</button>
+                                    <button type="button" class="btn btn-default" data-dismiss="modal" onclick="$('#lickey').val('');">关闭</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                {{ end }}
 			</div>
 
             <div class="col-lg-6">

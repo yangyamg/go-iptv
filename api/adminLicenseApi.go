@@ -38,6 +38,10 @@ func License(c *gin.Context) {
 			res = service.Register(params)
 		case "login":
 			res = service.Login(params)
+		case "changePwd":
+			res = service.ChangePwd(params)
+		case "reset":
+			res = service.Reset(params)
 		case "logout":
 			res = service.Logout()
 		case "dispay":
