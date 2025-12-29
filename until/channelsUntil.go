@@ -394,12 +394,6 @@ func AddChannelList(srclist string, cId, listId int64, doRepeat bool) (int, erro
 		}
 
 		source := parts[1]
-		if !strings.HasPrefix(source, "rtsp://") ||
-			!strings.HasPrefix(source, "rtmp://") ||
-			!strings.HasPrefix(source, "http://") ||
-			!strings.HasPrefix(source, "https://") {
-			continue
-		}
 
 		srcList := strings.Split(source, "#")
 
