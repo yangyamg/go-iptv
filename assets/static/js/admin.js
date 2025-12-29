@@ -716,6 +716,7 @@ function getChannelsTxt(btn){
 	var cid = $tr.find(".ca-id").data("value");
 	var cname = $tr.find(".ca-name").data("value");
 	var ctype = $tr.find(".ca-type").data("value"); 
+	var proxy = $tr.find(".ca-proxy").data("value");
 	$("#showtxtcaId").val(cid);
 	$("#showtxtCaname").val(cname);
 	$.ajax({
@@ -738,15 +739,21 @@ function getChannelsTxt(btn){
 				if (purls != ""){
 					$("#plist").val(purls);
 				}else {
-					$("#plist").val("未授权或未开启代理");
+					$("#plist").val("未授权或未开启中转");
 				}
 
-				if (ctype.includes("auto")){
-					$("#srclist").val('');
-					showPurl()
-				}else{
+				if (ctype.includes("auto") && proxy == 1){
+					$("#srclist").prop("readonly", true);
 					$("#srclist").val(result);
-					resetShowUrl();
+					showPurl()
+				}else if (ctype.includes("auto") && proxy == 0){
+					$("#srclist").prop("readonly", true);
+					$("#srclist").val(result);
+					resetShowUrl(0);
+				}else {
+					$("#srclist").prop("readonly", false);
+				    $("#srclist").val(result);
+					resetShowUrl(proxy);
 				}
 			}
 		},
@@ -786,7 +793,7 @@ function copyCh() {
             .filter(function (l) { return l.length > 0 });
 
         if (filtered.length === 0) {
-            lightyear.notify("未授权或未开启代理", "danger", 1000);
+            lightyear.notify("未授权或未开启中转", "danger", 1000);
             return;
         }
     }
@@ -822,11 +829,11 @@ function showPurl() {
 
     src.style.display = "none";
     proxy.style.display = "";
-	btn.style.display = "none"; 
-    if (btn) btn.innerText = "切换代理地址";
+	btn.style.display = ""; 
+    if (btn) btn.innerText = "显示原始地址";
 }
 
-function resetShowUrl() {
+function resetShowUrl(cap) {
     const src = document.getElementById("srclist");
     const proxy = document.getElementById("plist");
     const btn = document.getElementById("showPurl");
@@ -834,7 +841,11 @@ function resetShowUrl() {
 	btn.style.display = ""; 
     src.style.display = "";
     proxy.style.display = "none";
-    if (btn) btn.innerText = "切换代理地址";
+    if (btn) btn.innerText = "显示中转地址";
+
+    if (cap==0) {
+        btn.style.display = "none";
+    }
 }
 
 function changeShowUrl(btn) {
@@ -844,11 +855,11 @@ function changeShowUrl(btn) {
     if (src.style.display === "none") {
         src.style.display = "";
         proxy.style.display = "none";
-        btn.innerText = "切换代理地址";
+        btn.innerText = "显示中转地址";
     } else {
         src.style.display = "none";
         proxy.style.display = "";
-        btn.innerText = "切换原始地址";
+        btn.innerText = "显示原始地址";
     }
 }
 

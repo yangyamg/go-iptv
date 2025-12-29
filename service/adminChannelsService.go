@@ -848,12 +848,6 @@ func SaveCategory(params url.Values) dto.ReturnJsonDto {
 		ca.Ku9 = ku9
 		ca.Rules = ""
 
-		if proxy == "1" || proxy == "true" || proxy == "on" {
-			ca.Proxy = 1
-		} else {
-			ca.Proxy = 0
-		}
-
 		if autoType != "" {
 			if dao.Lic.Type == 0 {
 				return dto.ReturnJsonDto{Code: 0, Msg: "未授权不支持自动分类", Type: "danger"}
@@ -872,7 +866,12 @@ func SaveCategory(params url.Values) dto.ReturnJsonDto {
 				ca.Rules = ruleEpgs
 				dao.DB.Model(&models.IptvChannel{}).Delete(&models.IptvChannel{}, "c_id = ?", ca.ID)
 			}
+		}
+
+		if proxy == "1" || proxy == "true" || proxy == "on" {
 			ca.Proxy = 1
+		} else {
+			ca.Proxy = 0
 		}
 
 		if rename == "1" || rename == "true" || rename == "on" {
