@@ -105,7 +105,7 @@ func Install() (bool, string) {
 	log.Println("加载数据库...")
 	dao.InitDB("/config/iptv.db")
 	log.Println("初始化EPG缓存...")
-	cache, err := dao.NewFileCache("/config/cache/", true)
+	cache, err := dao.NewFileCache("/tmp/cache/", true)
 	if err != nil {
 		log.Println("初始化缓存失败:", err)
 		return false, "初始化缓存失败:" + err.Error()
