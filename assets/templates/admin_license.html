@@ -42,8 +42,8 @@
                     </div>
                     <div class="card-body" style="position: relative;">
                         <p>机器码：{{ .Lic.ID }}</p>
-                        <p>授权状态：{{ if eq .Lic.Type 0 }}<font color="red">未授权</font>{{ else if eq .Lic.Type 1 }}<font color="#33a996">已授权</font>{{ else if eq .Lic.Type 2 }}<font color="#33a996">永久授权</font>{{else}}<font color="red">未授权</font>{{ end }}</p>
-                        <p>过期时间：{{ if eq .Lic.Type 2 }}永久授权{{else}}{{ .Lic.ExpStr }}{{ end }}</p>
+                        <p>授权状态：{{ if eq .Lic.Type 0 }}<font color="red">未授权</font>{{ else if eq .Lic.Type 1 }}<font color="#33a996">已授权</font>{{ else if eq .Lic.Type 2 }}<font color="#33a996">永久授权</font>{{else}}<font color="#33a996">定制授权</font>{{ end }}</p>
+                        <p>过期时间：{{ if gt .Lic.Type 1 }}永久授权{{else}}{{ .Lic.ExpStr }}{{ end }}</p>
                     </div>
                 </div>
                 <div class="modal fade" id="register" tabindex="-1" role="dialog">
@@ -323,17 +323,17 @@
                     <div class="col-lg-6">
                         <div class="card">
                             <div class="card-header"><h4>隐藏作者信息</h4>
-                            {{ if ne .Lic.Type 2 }} <span class="badge badge-danger">未授权</span>{{ end }}
+                            {{ if lt .Lic.Type 2 }} <span class="badge badge-danger">未授权</span>{{ end }}
                             </div>
-                            <div class="card-body" {{ if ne .Lic.Type 2 }}style="pointer-events: none; opacity: 0.6;"{{ end }}>
+                            <div class="card-body" {{ if lt .Lic.Type 2 }}style="pointer-events: none; opacity: 0.6;"{{ end }}>
                                 <form method="post" action="/admin/license">
                                 <div class="form-inline">
                                     <div class="form-group" style="margin-right: 15px;">
                                         <label>隐藏作者信息:</label>
                                         <label class="lyear-switch switch-primary">
-                                            <input type="checkbox" id="dispay" name="dispay" onchange="submitFormPOST(this)" {{ if ne .Lic.Type 2 }}disabled{{else}}{{ if eq DisPay 1 }}checked{{ end }}{{ end }} />
+                                            <input type="checkbox" id="dispay" name="dispay" onchange="submitFormPOST(this)" {{ if lt .Lic.Type 2 }}disabled{{else}}{{ if eq DisPay 1 }}checked{{ end }}{{ end }} />
                                             <span></span>
-                                        </label>&nbsp;&nbsp;&nbsp;<span style=" color: #000000;">{{ if ne .Lic.Type 2 }}永久授权功能{{ end }}</span>
+                                        </label>&nbsp;&nbsp;&nbsp;<span style=" color: #000000;">{{ if gt .Lic.Type 1 }}永久授权功能{{ end }}</span>
                                     </div>
                                     <small class="help-block">关闭左下角赞助和作者信息</small>
                                 </div>
@@ -362,6 +362,27 @@
                             </div>
                         </div>
                     </div>
+                    <!-- <div class="col-lg-6">
+                        <div class="card">
+                            <div class="card-header"><h4>PHP服务器</h4>
+                            {{ if ne .Lic.Type 3 }} <span class="badge badge-danger">定制授权</span>{{ end }}
+                            </div>
+                            <div class="card-body" {{ if ne .Lic.Type 3 }}style="pointer-events: none; opacity: 0.6;"{{ end }}>
+                                <form method="post" action="/admin/license">
+                                <div class="form-inline">
+                                    <div class="form-group" style="margin-right: 15px;">
+                                        <label>启动PHP服务器:</label>
+                                        <label class="lyear-switch switch-primary">
+                                            <input type="checkbox" id="startPHP" name="startPHP" onchange="submitFormPOST(this)" {{ if ne .Lic.Type 3 }}disabled{{else}}{{if eq .StartPHP 1}}checked{{end}}{{ end }}/>
+                                            <span></span>
+                                        </label>
+                                    </div>
+                                    <small class="help-block">在容器88端口启动php服务器，可以通过映射外部访问，或者不映射端口，频道源使用http://127.0.0.1:88/&lt;文件名&gt;.php 订阅更新频道源</small>
+                                </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div> -->
                 </div>
 			</div>
 		</div>
