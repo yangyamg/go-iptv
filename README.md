@@ -24,7 +24,7 @@ docker run -d --name iptv_server -p <port>:80 -v iptv:/config v1st233/iptv:lates
 ```
 或
 ```
-git clone https://github.com/wz1st/go-iptv.git
+git clone https://github.com/yangyamg/go-iptv.git
 cd iptv
 docker build -f Dockerfile -t image_name:latest .
 docker volume create iptv
