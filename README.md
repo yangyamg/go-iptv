@@ -1,4 +1,4 @@
-## 清和iptv
+## iTuFM iptv
 >源自骆驼IPTV并大改，由原来的PHP+MySql改为Go+Sqlite     
 
 - 添加缺失功能
@@ -13,26 +13,13 @@
 - 添加UA支持
 - 添加一些自己的想法
 
-## 注意
-当前版本与之前PHP版本并不兼容，若要使用PHP版本，请使用`docker pull v1st233/iptv:20250905`
-
-## 反馈bug
-- Github: [Github issues](https://github.com/wz1st/go-iptv/issues)
-
-- 邮箱： v1st233@gmail.com
-
-- 博客： [清和's blog](https://www.qingh.xyz/go-iptv-docker/)
-
-- QQ群：952354546     入群答案在docker容器内     &nbsp;&nbsp;&nbsp;&nbsp;<a target="_blank" href="https://qm.qq.com/cgi-bin/qm/qr?k=pMPxYtnMvSlAL1irmcOzdSZSKhETKebC&jump_from=webapi&authKey=JluAYPajYgxbyuz+T0caZmrtfJbPQUxoZ6tORWtu1teN3PP/rEtu5lFZu+AUG1Bi"><img border="0" src="http://pub.idqqimg.com/wpa/images/group.png" alt="清和iptv" title="清和iptv"></a>
-
-
 
 ## [更新记录](./ChangeLog.md)
 
 ## 安装
 ```
 docker volume create iptv
-docker pull v1st233/iptv:latest
+docker pull iTuFM/iptv:latest
 docker run -d --name iptv_server -p <port>:80 -v iptv:/config v1st233/iptv:latest
 ```
 或
@@ -49,10 +36,6 @@ docker run -d --name iptv_server -p port:80 -v iptv:/config image_name:latest
 ## 打赏
 >如果觉得好用，请打赏支持一下
 
-<div style="display: flex; justify-content: center; gap: 50px;" id="install-show">
-  <img src="./static/images/wxpay.jpg" alt="微信" width="300">
-  <img src="./static/images/zfbpay.jpg" alt="支付宝" width="300">
-</div>
 
 
 
