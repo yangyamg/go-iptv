@@ -1,6 +1,6 @@
 server_url: http://10.10.220.161
 build:
-    name: 清和电视
+    name: iTuFM电视
     package: cn.v1st.player
     sign: 12315
     version: "1.0"
