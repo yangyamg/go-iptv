@@ -1,6 +1,6 @@
 services:
   iptv_server:
-    image: v1st233/iptv:latest
+    image: iTuFM/iptv:latest
     container_name: iptv_server
     privileged: true  # 添加特权模式
     ports:
