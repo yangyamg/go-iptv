@@ -68,9 +68,10 @@ func main() {
 
 	bootstrap.InitAlias() // 初始化epg别名
 
-	if os.Getenv("NOLICENSE") != "true" {
-		go bootstrap.InitLicense() // 初始化授权信息
-	}
+	// 总是跳过授权初始化，无论NOLICENSE环境变量如何设置
+// if os.Getenv("NOLICENSE") != "true" {
+// 	go bootstrap.InitLicense() // 初始化授权信息
+// }
 
 	if !until.Exists("/config/iptv.db") || !until.Exists("/config/config.yml") || !until.Exists("/config/install.lock") {
 		bootstrap.Installed = false
